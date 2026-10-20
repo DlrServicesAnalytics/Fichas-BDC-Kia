@@ -17,7 +17,7 @@ header.top .in{max-width:640px;margin:0 auto}
 .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#B4B9BC;font-weight:700}
 h1{font-size:28px;line-height:1.1;margin:4px 0 2px;color:#fff}
 .sub{font-size:13px;color:#BDBDBD}
-.brand{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#B4B9BC;margin-bottom:14px;min-height:24px}.brand img{height:22px;width:auto;display:block}
+.brand{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#B4B9BC;margin-bottom:14px;min-height:24px}.brand img{width:auto;display:block}.brand .lk{height:24px}.brand .lc{height:26px;margin-left:auto}.brand span{line-height:1.2}
 .stage{background:var(--card);color:var(--ink);border:1px solid var(--line);border-left:6px solid var(--red);border-radius:10px;padding:12px 14px;margin:16px 0 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .stage small{display:block;font-size:12px;color:var(--muted)}
 .stage strong{font-size:20px;letter-spacing:.02em}
@@ -92,7 +92,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);margin-top:36px}
 </head>
 <body>
 <header class="top"><div class="in">
-  <div class="brand"><img src="logo-kia.svg" alt="Kia" onerror="this.remove()"><span>Cumbre BDC · Red de Distribuidores</span></div>
+  <div class="brand"><img class="lk" src="logo-kia.png" alt="Kia" onerror="this.remove()"><span>Cumbre BDC · Red de Distribuidores</span><img class="lc" src="logo-cdk.png" alt="CDK" onerror="this.remove()"></div>
   <div id="hdr"><div class="eyebrow">Ficha de desempeño BDC</div><h1>Tu ficha</h1><div class="sub">Información confidencial de tu agencia</div></div>
 </div></header>
 
@@ -137,7 +137,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);margin-top:36px}
 
     <h2>Tu plan de acción</h2>
     <form class="plan" id="plan" novalidate>
-      <p class="lead">Con lo que viste en la cumbre y en esta ficha, define <b>una etapa</b>, <b>una meta a 30 días</b> y <b>hasta tres acciones</b>. El equipo de Dlr revisará tu plan y te dará retroalimentación.</p>
+      <p class="lead">Con lo que viste en la cumbre y en esta ficha, define <b>una etapa</b>, <b>una meta a 30 días</b> y <b>hasta tres acciones</b>. El equipo de CDK Global revisará tu plan y te dará retroalimentación.</p>
 
       <label>1. ¿Qué etapa del embudo van a mover?</label>
       <div class="seg" id="segEtapa"></div>
@@ -167,13 +167,13 @@ footer{text-align:center;font-size:12px;color:var(--muted);margin-top:36px}
     <div class="card done" style="margin-top:24px">
       <div class="ico">✓</div>
       <h2 style="border:0;margin:6px 0">Plan recibido</h2>
-      <p id="doneMsg">Gracias. Dlr revisará tu plan y te enviará retroalimentación.</p>
+      <p id="doneMsg">Gracias. CDK Global revisará tu plan y te enviará retroalimentación.</p>
       <dl class="sum" id="sum"></dl>
       <button class="ghost" id="edit" type="button" style="margin-top:16px">Editar y reenviar</button>
     </div>
   </section>
 
-  <footer>Elaborado por Dlr · Conferencia “BDC como motor estratégico de ventas”<br>Fuente: CDK SYSTEM, enero–septiembre 2026</footer>
+  <footer>Elaborado por CDK Global · Conferencia “BDC como motor estratégico de ventas”<br><span id="fuente">Fuente: CDK SYSTEM</span></footer>
 </main>
 
 <script>
@@ -250,7 +250,8 @@ function open(){
   const T = D.totales;
   rows += `<tr class="tot"><td>Total agencia</td><td>${T.cont.toLocaleString('es-MX')}</td><td>${T.cit.toLocaleString('es-MX')}</td><td>${pc(D.kpi.agend.v)}</td><td>${pc(D.kpi.cump.v)}</td><td>${pc(D.kpi.cierre.v)}</td><td>${pc(D.kpi.neta.v)}</td></tr>`;
   $('tFuentes').innerHTML = `<thead><tr><th>Fuente</th><th>Contactos</th><th>Citas</th><th>Agend.</th><th>Cumpl.</th><th>Cierre</th><th>Neta</th></tr></thead><tbody>${rows}</tbody>`;
-  $('mixNote').textContent = `En rojo: más de 10% debajo de la red en esa fuente. Las ventas de cita explican el ${Math.round(T.citV / T.vtas * 100)}% de sus ${T.vtas.toLocaleString('es-MX')} unidades (red: 78%). Desliza la tabla →`;
+  $('mixNote').textContent = `En rojo: más de 10% debajo de la red en esa fuente. Las ventas de cita explican el ${Math.round(T.citV / T.vtas * 100)}% de sus ${T.vtas.toLocaleString('es-MX')} unidades (red: ${D.redMix || 78}%). Desliza la tabla →`;
+  if (D.fuente) $('fuente').textContent = 'Fuente: ' + D.fuente;
 
   if (D.tendencia && D.tendencia.length){
     $('tTrend').innerHTML = `<thead><tr><th>Periodo</th><th>Agend.</th><th>Confirm.</th><th>Cumpl.</th><th>Cierre</th><th>Neta</th></tr></thead><tbody>` +
@@ -333,7 +334,7 @@ $('plan').addEventListener('submit', async e => {
     const j = await r.json();
     if (!j.ok) throw new Error(j.error || 'error');
   } catch(err1){
-    try { await fetch(ENDPOINT, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(p) }); note = 'Enviado. Si no recibes confirmación de Dlr en 48 horas, vuelve a enviarlo.'; }
+    try { await fetch(ENDPOINT, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(p) }); note = 'Enviado. Si no recibes confirmación de CDK Global en 48 horas, vuelve a enviarlo.'; }
     catch(err2){ $('planErr').textContent = 'No hay conexión. Tu plan quedó guardado en este celular; intenta de nuevo en un momento.'; $('send').disabled = false; $('send').textContent = 'Enviar mi plan'; return; }
   }
   store.set('sent:' + FID, { ok:true, payload:p, note });
