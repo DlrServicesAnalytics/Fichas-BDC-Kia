@@ -87,6 +87,22 @@ button{font:inherit;font-weight:700;font-size:17px;border:0;border-radius:10px;p
 .sum dt{font-weight:700;color:var(--ink);margin-top:8px}.sum dd{margin:0}
 footer{text-align:center;font-size:12px;color:var(--muted);margin-top:36px}
 [hidden]{display:none!important}
+/* fecha límite y cuenta regresiva */
+.due{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:8px;padding:10px 12px;margin:0 0 14px}
+.due small{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.due b{color:var(--ink);font-size:15px}
+.cal{font:inherit;font-size:13px;font-weight:700;background:#fff;color:var(--ink);border:1px solid var(--ink);border-radius:0;padding:8px 10px;cursor:pointer}
+.cd{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--ink);color:#fff;padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 -2px 10px rgba(5,20,31,.25)}
+.cd .l{font-size:12px;color:#B4B9BC;text-transform:uppercase;letter-spacing:.06em}
+.cd .t{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.cd a{color:#fff;font-size:13px;font-weight:700;border:1px solid #fff;padding:7px 10px;text-decoration:none;white-space:nowrap}
+.cd.warn{background:var(--red)}.cd.warn .l{color:#fff}
+.cd.closed{background:#37434B}
+body.has-cd{padding-bottom:84px}
+.modal{position:fixed;inset:0;background:rgba(5,20,31,.6);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal .box{background:#fff;border-radius:12px;max-width:380px;width:100%;padding:20px;text-align:center;border-top:6px solid var(--red)}
+.modal .box h3{margin:0 0 8px;color:var(--ink);font-size:20px}
+.modal .box p{margin:0 0 16px}
 @media(min-width:560px){.kpis{grid-template-columns:repeat(3,1fr)}.kpi.wide{grid-column:auto}}
 </style>
 </head>
@@ -137,6 +153,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);margin-top:36px}
 
     <h2>Tu plan de acción</h2>
     <form class="plan" id="plan" novalidate>
+      <div class="due"><div><small>Fecha límite de entrega</small><b id="dueTxt"></b></div><button type="button" class="cal" id="calBtn">Recordatorio en mi calendario</button></div>
       <p class="lead">Con lo que viste en la cumbre y en esta ficha, define <b>una etapa</b>, <b>una meta a 30 días</b> y <b>hasta tres acciones</b>. El equipo de CDK Global revisará tu plan y te dará retroalimentación.</p>
 
       <label>1. ¿Qué etapa del embudo van a mover?</label>
@@ -173,11 +190,15 @@ footer{text-align:center;font-size:12px;color:var(--muted);margin-top:36px}
     </div>
   </section>
 
+  <div class="cd" id="cd" hidden role="status" aria-live="off"><div><div class="l" id="cdL">Tu plan vence en</div><div class="t" id="cdT">—</div></div><a href="#plan" id="cdGo">Ir a mi plan</a></div>
+  <div class="modal" id="warn" hidden role="alertdialog" aria-labelledby="warnH"><div class="box"><h3 id="warnH">Falta 1 hora</h3><p>El plazo para enviar el plan de acción de tu agencia cierra hoy a las 2:00 p.m. Si ya lo llenaste, envíalo ahora.</p><button class="primary" type="button" id="warnOk" style="margin-top:0">Ir a mi plan</button></div></div>
   <footer>Elaborado por CDK Global · Conferencia “BDC como motor estratégico de ventas”<br><span id="fuente">Fuente: CDK SYSTEM</span></footer>
 </main>
 
 <script>
 /* ===== Configuración ===== */
+const DEADLINE = new Date("2026-11-19T14:00:00-06:00"); // 19 nov 2026, 2:00 p.m., hora del centro de México
+const DEADLINE_TXT = "Jueves 19 de noviembre de 2026, 2:00 p.m.";
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbyLY6T-WxMv2RAnF4sMT2JCcWAHQzHV0ViLnSDoN--9QudWfEJ5kYg5qJBaALEJ-3sNTw/exec"; // URL de la aplicación web de Google Apps Script (/exec)
 
 /* ===== Utilidades ===== */
@@ -235,6 +256,8 @@ $('pinForm').addEventListener('submit', async e => {
 
 /* ===== Render de la ficha ===== */
 function open(){
+  $('dueTxt').textContent = DEADLINE_TXT + ' (hora del centro de México)';
+  startCountdown();
   document.title = 'Ficha BDC · ' + D.agencia;
   $('hdr').innerHTML = `<div class="eyebrow">Ficha de desempeño BDC</div><h1>${esc(D.agencia)}</h1><div class="sub">${esc(D.grupo ? D.grupo + ' · ' : '')}${esc(D.periodo)} · ${D.asesores} asesores en promedio</div>`;
   const ek = D.kpi[D.etapa];
@@ -250,7 +273,7 @@ function open(){
   const T = D.totales;
   rows += `<tr class="tot"><td>Total agencia</td><td>${T.cont.toLocaleString('es-MX')}</td><td>${T.cit.toLocaleString('es-MX')}</td><td>${pc(D.kpi.agend.v)}</td><td>${pc(D.kpi.cump.v)}</td><td>${pc(D.kpi.cierre.v)}</td><td>${pc(D.kpi.neta.v)}</td></tr>`;
   $('tFuentes').innerHTML = `<thead><tr><th>Fuente</th><th>Contactos</th><th>Citas</th><th>Agend.</th><th>Cumpl.</th><th>Cierre</th><th>Neta</th></tr></thead><tbody>${rows}</tbody>`;
-  $('mixNote').textContent = `En rojo: más de 10% debajo de la red en esa fuente. Las ventas de cita explican el ${Math.round(T.citV / T.vtas * 100)}% de sus ${T.vtas.toLocaleString('es-MX')} unidades (red: ${D.redMix || 78}%). Desliza la tabla →`;
+  $('mixNote').textContent = `En rojo: más de 10% debajo de la red en esa fuente. Las ventas de cita explican el ${Math.min(100, Math.round(T.citV / T.vtas * 100))}% de sus ${T.vtas.toLocaleString('es-MX')} unidades (red: ${D.redMix || 78}%). Desliza la tabla →`;
   if (D.fuente) $('fuente').textContent = 'Fuente: ' + D.fuente;
 
   if (D.tendencia && D.tendencia.length){
@@ -321,6 +344,7 @@ function validate(p){
 
 $('plan').addEventListener('submit', async e => {
   e.preventDefault();
+  if (Date.now() >= DEADLINE.getTime()) { $('planErr').textContent = 'El plazo de entrega cerró el ' + DEADLINE_TXT + '.'; return; }
   const p = collect();
   const err = validate(p);
   $('planErr').textContent = err;
@@ -332,6 +356,7 @@ $('plan').addEventListener('submit', async e => {
   try {
     const r = await fetch(ENDPOINT, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(p) });
     const j = await r.json();
+    if (!j.ok && j.error === 'plazo_cerrado') { $('planErr').textContent = 'El plazo de entrega ya cerró.'; $('send').disabled = false; $('send').textContent = 'Enviar mi plan'; return; }
     if (!j.ok) throw new Error(j.error || 'error');
   } catch(err1){
     try { await fetch(ENDPOINT, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(p) }); note = 'Enviado. Si no recibes confirmación de CDK Global en 48 horas, vuelve a enviarlo.'; }
@@ -348,8 +373,57 @@ function renderDone(p, note){
   const acts = p.acciones.filter(a => a.accion).map((a,i) => `<dd>${i+1}. ${esc(a.accion)} — ${esc(a.responsable)} (${esc(a.fecha)})</dd>`).join('');
   $('sum').innerHTML = `<dt>Etapa</dt><dd>${esc(p.etapa)}: hoy ${pc(p.indicador_hoy)} → meta ${esc(p.meta_30d)}%</dd><dt>Acciones</dt>${acts}<dt>Se compromete</dt><dd>${esc(p.nombre)}, ${esc(p.puesto)}</dd>`;
   show('vDone'); window.scrollTo(0, 0);
+  $('cd').hidden = true; document.body.classList.remove('has-cd');
 }
 $('edit').addEventListener('click', () => { const s = store.get('sent:' + FID); if (s) fill(s.payload); store.set('sent:' + FID, null); show('vFicha'); document.getElementById('plan').scrollIntoView(); });
+
+/* ===== Cuenta regresiva, aviso de 1 hora y recordatorio ===== */
+let cdTimer = null;
+function fmt(ms){
+  const t = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(t / 86400), h = Math.floor(t % 86400 / 3600), m = Math.floor(t % 3600 / 60), s = t % 60;
+  const p2 = n => String(n).padStart(2, '0');
+  return d > 0 ? `${d} d ${p2(h)} h ${p2(m)} min` : `${p2(h)}:${p2(m)}:${p2(s)}`;
+}
+function startCountdown(){
+  if (cdTimer) return;
+  const tick = () => {
+    const sent = !$('vDone').hidden;
+    const left = DEADLINE.getTime() - Date.now();
+    $('cd').hidden = sent; document.body.classList.toggle('has-cd', !sent);
+    if (sent) return;
+    if (left <= 0){
+      $('cd').className = 'cd closed'; $('cdL').textContent = 'Plazo cerrado'; $('cdT').textContent = '19 nov · 2:00 p.m.';
+      $('cdGo').hidden = true; $('send').disabled = true; $('send').textContent = 'Plazo cerrado';
+      clearInterval(cdTimer); return;
+    }
+    $('cd').className = 'cd' + (left <= 3600000 ? ' warn' : '');
+    $('cdL').textContent = left <= 3600000 ? '¡Última hora! Envía tu plan' : 'Tu plan vence en';
+    $('cdT').textContent = fmt(left);
+    if (left <= 3600000 && !store.sget('warned:' + FID)){
+      store.sset('warned:' + FID, '1');
+      $('warn').hidden = false;
+      try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch(e){}
+    }
+  };
+  tick(); cdTimer = setInterval(tick, 1000);
+}
+$('warnOk').addEventListener('click', () => { $('warn').hidden = true; $('plan').scrollIntoView({ behavior:'smooth' }); });
+$('cdGo').addEventListener('click', e => { e.preventDefault(); $('plan').scrollIntoView({ behavior:'smooth' }); });
+$('calBtn').addEventListener('click', () => {
+  const z = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const start = new Date(DEADLINE.getTime() - 3600000);
+  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDK Global//Cumbre BDC Kia//ES','METHOD:PUBLISH','BEGIN:VEVENT',
+    'UID:plan-bdc-' + FID + '@cumbre-bdc-kia','DTSTAMP:' + z(new Date()),'DTSTART:' + z(start),'DTEND:' + z(DEADLINE),
+    'SUMMARY:Entregar plan de acción BDC · ' + (D ? D.agencia : 'Kia'),
+    'DESCRIPTION:El plazo cierra a las 2:00 p.m. Abre tu ficha con el QR impreso y tu código de 4 dígitos.',
+    'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Falta 1 hora para entregar tu plan de acción BDC','TRIGGER:PT0M','END:VALARM',
+    'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Mañana vence tu plan de acción BDC','TRIGGER:-P1D','END:VALARM',
+    'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([ics], { type:'text/calendar;charset=utf-8' }));
+  a.download = 'Plan-BDC-Kia.ics'; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+});
 </script>
 </body>
 </html>
