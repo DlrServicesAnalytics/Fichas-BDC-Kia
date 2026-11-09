@@ -91,12 +91,19 @@ footer{text-align:center;font-size:12px;color:var(--muted);margin-top:36px}
 .due{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:8px;padding:10px 12px;margin:0 0 14px}
 .due small{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .due b{color:var(--ink);font-size:15px}
+.calv{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;margin:0 0 14px}
+.calv .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}.calv .hd b{color:var(--ink);font-size:15px;text-transform:capitalize}.calv .hd small{font-size:12px;color:var(--muted)}
+.calv .g{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:13px}
+.calv .g .w{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase}
+.calv .g .d{padding:7px 0;border-radius:6px;color:var(--gray)}.calv .g .d.past{color:#B9BEC1}.calv .g .d.ev{background:var(--ink);color:#fff;font-weight:700}.calv .g .d.dl{background:var(--red);color:#fff;font-weight:800}.calv .g .d.today{outline:2px solid var(--ink);outline-offset:-2px;font-weight:700}
+.calv .lg{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--gray)}.calv .lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.calv .add{margin-top:10px;width:100%}
 .cal{font:inherit;font-size:13px;font-weight:700;background:#fff;color:var(--ink);border:1px solid var(--ink);border-radius:0;padding:8px 10px;cursor:pointer}
-.cd{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--ink);color:#fff;padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 -2px 10px rgba(5,20,31,.25)}
-.cd .l{font-size:12px;color:#B4B9BC;text-transform:uppercase;letter-spacing:.06em}
+.cd{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--red);color:#fff;padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 -2px 10px rgba(5,20,31,.25)}
+.cd .l{font-size:12px;color:#FFE3E8;text-transform:uppercase;letter-spacing:.06em}
 .cd .t{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.02em}
 .cd a{color:#fff;font-size:13px;font-weight:700;border:1px solid #fff;padding:7px 10px;text-decoration:none;white-space:nowrap}
-.cd.warn{background:var(--red)}.cd.warn .l{color:#fff}
+.cd.warn{background:var(--red)}.cd.warn .l{color:#fff;font-weight:700}
 .cd.closed{background:#37434B}
 body.has-cd{padding-bottom:84px}
 .modal{position:fixed;inset:0;background:rgba(5,20,31,.6);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px}
@@ -108,21 +115,21 @@ body.has-cd{padding-bottom:84px}
 </head>
 <body>
 <header class="top"><div class="in">
-  <div class="brand"><img class="lk" src="logo-kia.png" alt="Kia" onerror="this.remove()"><span>Cumbre BDC · Red de Distribuidores</span><img class="lc" src="logo-cdk.png" alt="CDK" onerror="this.remove()"></div>
+  <div class="brand"><img class="lk" src="logo-kia.png" alt="Kia" onerror="this.remove()"><span>Cumbre Líderes de BDC<br>Kia México 2026</span><img class="lc" src="logo-cdk.png" alt="CDK" onerror="this.remove()"></div>
   <div id="hdr"><div class="eyebrow">Ficha de desempeño BDC</div><h1>Tu ficha</h1><div class="sub">Información confidencial de tu agencia</div></div>
 </div></header>
 
 <main class="wrap">
   <!-- Sin enlace -->
   <section id="vNoLink" class="gate" hidden>
-    <div class="card"><h2 style="margin-top:0">Escanea tu QR</h2><p>Para abrir tu ficha usa el código QR impreso en la ficha que recibiste en la cumbre.</p></div>
+    <div class="card"><h2 style="margin-top:0">Escanea tu QR</h2><p>Para abrir tu ficha escanea el código QR de la tarjeta que recibiste en la Cumbre Líderes de BDC Kia México 2026.</p></div>
   </section>
 
   <!-- PIN -->
   <section id="vPin" class="gate" hidden>
     <div class="card">
       <h2 style="margin-top:0">Código de acceso</h2>
-      <p>Escribe el código de 4 dígitos impreso junto al QR de tu ficha.</p>
+      <p>Escribe el código de 4 dígitos impreso en tu tarjeta, junto al QR.</p>
       <form id="pinForm" autocomplete="off">
         <input id="pin" class="pin" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" aria-label="Código de 4 dígitos" autofocus>
         <button class="primary" type="submit" id="pinBtn">Abrir mi ficha</button>
@@ -153,7 +160,8 @@ body.has-cd{padding-bottom:84px}
 
     <h2>Tu plan de acción</h2>
     <form class="plan" id="plan" novalidate>
-      <div class="due"><div><small>Fecha límite de entrega</small><b id="dueTxt"></b></div><button type="button" class="cal" id="calBtn">Recordatorio en mi calendario</button></div>
+      <div class="due"><div><small>Fecha límite de entrega</small><b id="dueTxt"></b></div></div>
+      <div class="calv" id="calv"></div>
       <p class="lead">Con lo que viste en la cumbre y en esta ficha, define <b>una etapa</b>, <b>una meta a 30 días</b> y <b>hasta tres acciones</b>. El equipo de CDK Global revisará tu plan y te dará retroalimentación.</p>
 
       <label>1. ¿Qué etapa del embudo van a mover?</label>
@@ -192,7 +200,7 @@ body.has-cd{padding-bottom:84px}
 
   <div class="cd" id="cd" hidden role="status" aria-live="off"><div><div class="l" id="cdL">Tu plan vence en</div><div class="t" id="cdT">—</div></div><a href="#plan" id="cdGo">Ir a mi plan</a></div>
   <div class="modal" id="warn" hidden role="alertdialog" aria-labelledby="warnH"><div class="box"><h3 id="warnH">Falta 1 hora</h3><p>El plazo para enviar el plan de acción de tu agencia cierra hoy a las 2:00 p.m. Si ya lo llenaste, envíalo ahora.</p><button class="primary" type="button" id="warnOk" style="margin-top:0">Ir a mi plan</button></div></div>
-  <footer>Elaborado por CDK Global · Conferencia “BDC como motor estratégico de ventas”<br><span id="fuente">Fuente: CDK SYSTEM</span></footer>
+  <footer>Elaborado por CDK Global · Cumbre Líderes de BDC Kia México 2026 · 18 y 19 de noviembre<br><span id="fuente">Fuente: CDK SYSTEM</span></footer>
 </main>
 
 <script>
@@ -234,10 +242,11 @@ async function decrypt(pin){
   if (!TOKEN || !window.crypto || !crypto.subtle) { show('vNoLink'); return; }
   FID = (await sha256hex('id:' + TOKEN)).slice(0, 24);
   try {
-    const r = await fetch('d/' + FID + '.json', { cache:'no-store' });
+    const r = await fetch('d/fichas.json', { cache:'no-store' });
     if (!r.ok) throw 0;
-    ENC = await r.json();
-  } catch(e){ show('vNoLink'); $('vNoLink').querySelector('p').textContent = 'Este enlace no es válido. Escanea nuevamente el QR de tu ficha.'; return; }
+    ENC = (await r.json())[FID];
+    if (!ENC) throw 0;
+  } catch(e){ show('vNoLink'); $('vNoLink').querySelector('p').textContent = 'Este enlace no es válido. Escanea nuevamente el QR de tu tarjeta.'; return; }
   const remembered = store.sget('pin:' + FID);
   if (remembered) { try { D = await decrypt(remembered); return open(); } catch(e){} }
   show('vPin'); $('pin').focus();
@@ -250,15 +259,28 @@ $('pinForm').addEventListener('submit', async e => {
   if (!/^\d{4}$/.test(pin)) { $('pinErr').textContent = 'Escribe los 4 dígitos.'; return; }
   $('pinBtn').disabled = true; $('pinBtn').textContent = 'Abriendo…';
   try { D = await decrypt(pin); store.sset('pin:' + FID, pin); open(); }
-  catch(err){ $('pinErr').textContent = 'Código incorrecto. Revisa el que viene impreso junto al QR.'; }
+  catch(err){ $('pinErr').textContent = 'Código incorrecto. Revisa el que viene impreso en tu tarjeta.'; }
   finally { $('pinBtn').disabled = false; $('pinBtn').textContent = 'Abrir mi ficha'; }
 });
 
 /* ===== Render de la ficha ===== */
 function open(){
   $('dueTxt').textContent = DEADLINE_TXT + ' (hora del centro de México)';
+  renderCal();
   startCountdown();
   document.title = 'Ficha BDC · ' + D.agencia;
+  if (D.soloPlan){
+    $('hdr').innerHTML = `<div class="eyebrow">Plan de acción BDC</div><h1>${esc(D.agencia)}</h1><div class="sub">${esc(D.grupo ? D.grupo + ' · ' : '')}Cumbre Líderes de BDC Kia México 2026</div>`;
+    ['stage','kpis','tFuentes','trendWrap','diag','opp'].forEach(id => { const el = $(id); const sec = el.closest('.tbl') || el; sec.hidden = true; });
+    document.querySelectorAll('#vFicha > h2, #vFicha > p.note').forEach(el => { if (!/plan de acción/i.test(el.textContent)) el.hidden = true; });
+    $('stage').insertAdjacentHTML('afterend', `<div class="stage" style="border-left-color:var(--ink)"><div><small>Tu agencia</small><strong>PLAN DE ACCIÓN</strong></div><div class="big">${esc(D.nota || 'Tu agencia no tiene registros suficientes en CDK SYSTEM para el periodo evaluado. Registra tu plan para arrancar.')}</div></div>`);
+    if (D.fuente) $('fuente').textContent = 'Fuente: ' + D.fuente;
+    buildForm();
+    const last0 = store.get('sent:' + FID);
+    if (last0 && last0.ok) { renderDone(last0.payload, last0.note); } else show('vFicha');
+    window.scrollTo(0, 0);
+    return;
+  }
   $('hdr').innerHTML = `<div class="eyebrow">Ficha de desempeño BDC</div><h1>${esc(D.agencia)}</h1><div class="sub">${esc(D.grupo ? D.grupo + ' · ' : '')}${esc(D.periodo)} · ${D.asesores} asesores en promedio</div>`;
   const ek = D.kpi[D.etapa];
   const stageMsg = D.etapa === 'cump' ? `${Math.round(100 - ek.v)} de cada 100 citas no llegan` : D.etapa === 'agend' ? `${Math.round(100 - ek.v)} de cada 100 contactos no llegan a cita` : `${Math.round(100 - ek.v)} de cada 100 citas en sala no compran`;
@@ -294,7 +316,7 @@ function open(){
 /* ===== Formulario ===== */
 function buildForm(){
   $('segEtapa').innerHTML = Object.entries(STAGES).map(([k,n]) =>
-    `<input type="radio" name="etapa" id="e_${k}" value="${k}"><label for="e_${k}">${n}<small>Hoy ${pc(D.kpi[k].v)}</small></label>`).join('');
+    `<input type="radio" name="etapa" id="e_${k}" value="${k}"><label for="e_${k}">${n}<small>${D.soloPlan ? 'Hoy —' : 'Hoy ' + pc(D.kpi[k].v)}</small></label>`).join('');
   $('acts').innerHTML = [1,2,3].map(i => `<div class="act"><h3>Acción ${i}${i>1?' <span class="opt" style="color:var(--muted);font-weight:400">(opcional)</span>':''}</h3>
     <label for="a${i}" style="margin-top:8px">¿Qué van a hacer?</label><textarea id="a${i}" placeholder="${i===1?'Ej.: El gerente de ventas confirma por llamada todas las citas del día siguiente':''}"></textarea>
     <div class="row2"><div><label for="r${i}">Responsable</label><input id="r${i}" type="text" placeholder="Nombre"></div><div><label for="f${i}">Fecha compromiso</label><input id="f${i}" type="date"></div></div></div>`).join('');
@@ -307,6 +329,7 @@ function buildForm(){
 }
 function onStage(){
   const k = selStage(); if (!k) return;
+  if (D.soloPlan){ $('today').textContent = 'Hoy: —'; $('metaHint').textContent = 'Define la meta que quieren alcanzar en los próximos 30 días.'; return; }
   const x = D.kpi[k];
   $('today').textContent = 'Hoy: ' + pc(x.v);
   $('metaHint').textContent = `Referencias: red ${pc(x.red)} · mejores agencias ${pc(x.top)}.` + (k === D.etapa ? ' Esta es la etapa que tu ficha señala como prioritaria.' : ` Tu ficha señala ${D.etapaNombre.toLowerCase()} como prioritaria.`);
@@ -316,8 +339,8 @@ const v = id => $(id).value.trim();
 function collect(){
   const k = selStage();
   return {
-    id: FID, agencia: D.agencia, grupo: D.grupo, etapa: k ? STAGES[k] : '', etapa_sugerida: D.etapaNombre,
-    indicador_hoy: k ? D.kpi[k].v : '', meta_30d: v('meta'),
+    id: FID, agencia: D.agencia, grupo: D.grupo, etapa: k ? STAGES[k] : '', etapa_sugerida: D.soloPlan ? 'Sin datos' : D.etapaNombre,
+    indicador_hoy: (k && !D.soloPlan) ? D.kpi[k].v : '', meta_30d: v('meta'),
     acciones: [1,2,3].map(i => ({ accion: v('a'+i), responsable: v('r'+i), fecha: v('f'+i) })),
     apoyo: v('apoyo'), nombre: v('nombre'), puesto: v('puesto'), correo: v('correo'), telefono: v('tel')
   };
@@ -359,8 +382,11 @@ $('plan').addEventListener('submit', async e => {
     if (!j.ok && j.error === 'plazo_cerrado') { $('planErr').textContent = 'El plazo de entrega ya cerró.'; $('send').disabled = false; $('send').textContent = 'Enviar mi plan'; return; }
     if (!j.ok) throw new Error(j.error || 'error');
   } catch(err1){
-    try { await fetch(ENDPOINT, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(p) }); note = 'Enviado. Si no recibes confirmación de CDK Global en 48 horas, vuelve a enviarlo.'; }
-    catch(err2){ $('planErr').textContent = 'No hay conexión. Tu plan quedó guardado en este celular; intenta de nuevo en un momento.'; $('send').disabled = false; $('send').textContent = 'Enviar mi plan'; return; }
+    store.set('draft:' + FID, p);
+    $('planErr').textContent = (err1 && err1.message === 'ficha_no_valida')
+      ? 'No pudimos registrar tu plan: la ficha no está habilitada. Avisa al equipo de CDK Global; tu plan quedó guardado en este celular.'
+      : 'No se pudo enviar tu plan. Tu plan quedó guardado en este celular; revisa tu conexión e intenta de nuevo.';
+    $('send').disabled = false; $('send').textContent = 'Enviar mi plan'; return;
   }
   store.set('sent:' + FID, { ok:true, payload:p, note });
   store.set('draft:' + FID, p);
@@ -371,7 +397,7 @@ $('plan').addEventListener('submit', async e => {
 function renderDone(p, note){
   if (note) $('doneMsg').textContent = note;
   const acts = p.acciones.filter(a => a.accion).map((a,i) => `<dd>${i+1}. ${esc(a.accion)} — ${esc(a.responsable)} (${esc(a.fecha)})</dd>`).join('');
-  $('sum').innerHTML = `<dt>Etapa</dt><dd>${esc(p.etapa)}: hoy ${pc(p.indicador_hoy)} → meta ${esc(p.meta_30d)}%</dd><dt>Acciones</dt>${acts}<dt>Se compromete</dt><dd>${esc(p.nombre)}, ${esc(p.puesto)}</dd>`;
+  $('sum').innerHTML = `<dt>Etapa</dt><dd>${esc(p.etapa)}: ${p.indicador_hoy === '' ? '' : 'hoy ' + pc(p.indicador_hoy) + ' → '}meta ${esc(p.meta_30d)}%</dd><dt>Acciones</dt>${acts}<dt>Se compromete</dt><dd>${esc(p.nombre)}, ${esc(p.puesto)}</dd>`;
   show('vDone'); window.scrollTo(0, 0);
   $('cd').hidden = true; document.body.classList.remove('has-cd');
 }
@@ -409,13 +435,31 @@ function startCountdown(){
 }
 $('warnOk').addEventListener('click', () => { $('warn').hidden = true; $('plan').scrollIntoView({ behavior:'smooth' }); });
 $('cdGo').addEventListener('click', e => { e.preventDefault(); $('plan').scrollIntoView({ behavior:'smooth' }); });
-$('calBtn').addEventListener('click', () => {
+function renderCal(){
+  const y = 2026, mo = 10; // noviembre 2026
+  const first = new Date(y, mo, 1).getDay(), days = new Date(y, mo + 1, 0).getDate();
+  const now = new Date(), isNov = now.getFullYear() === y && now.getMonth() === mo;
+  let g = ['dom','lun','mar','mié','jue','vie','sáb'].map(w => `<div class="w">${w}</div>`).join('');
+  for (let i = 0; i < first; i++) g += '<div></div>';
+  for (let d = 1; d <= days; d++){
+    let c = 'd';
+    if (d === 19) c += ' dl'; else if (d === 18) c += ' ev';
+    if (isNov && d < now.getDate()) c += ' past';
+    if (isNov && d === now.getDate()) c += ' today';
+    g += `<div class="${c}">${d}</div>`;
+  }
+  $('calv').innerHTML = `<div class="hd"><b>noviembre 2026</b><small>Hora del centro de México</small></div><div class="g">${g}</div>
+    <div class="lg"><span><i style="background:var(--ink)"></i>18 · Cumbre</span><span><i style="background:var(--red)"></i>19 · Cumbre y cierre de planes, 2:00 p.m.</span></div>
+    <button type="button" class="cal add" id="calBtn">Agregar recordatorio a mi calendario</button>`;
+  $('calBtn').addEventListener('click', addIcs);
+}
+function addIcs(){
   const z = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const start = new Date(DEADLINE.getTime() - 3600000);
-  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDK Global//Cumbre BDC Kia//ES','METHOD:PUBLISH','BEGIN:VEVENT',
+  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDK Global//Cumbre Lideres de BDC Kia Mexico 2026//ES','METHOD:PUBLISH','BEGIN:VEVENT',
     'UID:plan-bdc-' + FID + '@cumbre-bdc-kia','DTSTAMP:' + z(new Date()),'DTSTART:' + z(start),'DTEND:' + z(DEADLINE),
     'SUMMARY:Entregar plan de acción BDC · ' + (D ? D.agencia : 'Kia'),
-    'DESCRIPTION:El plazo cierra a las 2:00 p.m. Abre tu ficha con el QR impreso y tu código de 4 dígitos.',
+    'DESCRIPTION:Cumbre Líderes de BDC Kia México 2026. El plazo cierra a las 2:00 p.m. Abre tu ficha con el QR de tu tarjeta y tu código de 4 dígitos.',
     'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Falta 1 hora para entregar tu plan de acción BDC','TRIGGER:PT0M','END:VALARM',
     'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Mañana vence tu plan de acción BDC','TRIGGER:-P1D','END:VALARM',
     'END:VEVENT','END:VCALENDAR'].join('\r\n');
@@ -423,7 +467,7 @@ $('calBtn').addEventListener('click', () => {
   a.href = URL.createObjectURL(new Blob([ics], { type:'text/calendar;charset=utf-8' }));
   a.download = 'Plan-BDC-Kia.ics'; document.body.appendChild(a); a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
-});
+}
 </script>
 </body>
 </html>
