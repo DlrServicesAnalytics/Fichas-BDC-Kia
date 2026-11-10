@@ -110,19 +110,42 @@ body.has-cd{padding-bottom:84px}
 .modal .box{background:#fff;border-radius:12px;max-width:380px;width:100%;padding:20px;text-align:center;border-top:6px solid var(--red)}
 .modal .box h3{margin:0 0 8px;color:var(--ink);font-size:20px}
 .modal .box p{margin:0 0 16px}
+/* logo de la cumbre */
+.brand .lcu{height:76px;width:76px;margin:0 auto;border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+/* preguntas poderosas */
+.pp-lead{font-size:14px;margin:0 2px 12px}
+.pq{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px}
+.pq.pri{border-left:6px solid var(--red)}
+.pq .tp{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.pq .tp em{font-style:normal;background:var(--red);color:#fff;padding:3px 7px;border-radius:4px;letter-spacing:.06em;white-space:nowrap}
+.pq h3{font-size:17px;color:var(--ink);margin:6px 0 8px;line-height:1.25}
+.pq blockquote{margin:0 0 10px;padding:0 0 0 12px;border-left:3px solid var(--line);font-style:italic;color:var(--gray);font-size:15px}
+.pq ul{margin:0;padding-left:18px}.pq li{color:var(--ink);font-weight:600;font-size:15px;margin-bottom:6px}
+.pq .cl{font-size:14px;margin:8px 0 0;color:var(--gray)}
+.pq .wk{margin-top:10px;background:var(--bg);border-radius:8px;padding:9px 11px;font-size:14px}.pq .wk b{color:var(--ink);display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.ppMore{margin-top:4px}
+.ppMore details{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+.ppMore summary{cursor:pointer;list-style:none;padding:12px 14px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;align-items:center;font-size:15px}
+.ppMore summary::-webkit-details-marker{display:none}
+.ppMore summary::after{content:"+";font-size:20px;font-weight:400;color:var(--muted)}
+.ppMore details[open] summary::after{content:"−"}
+.ppMore summary small{font-weight:400;color:var(--muted);font-size:12px;margin-left:6px}
+.ppMore .mt{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:16px 2px 8px}
+.ppMore details .pq .tp{display:none}
+.ppMore details .pq{border:0;border-top:1px solid var(--line);border-radius:0;margin:0}
 @media(min-width:560px){.kpis{grid-template-columns:repeat(3,1fr)}.kpi.wide{grid-column:auto}}
 </style>
 </head>
 <body>
 <header class="top"><div class="in">
-  <div class="brand"><img class="lk" src="logo-kia.png" alt="Kia" onerror="this.remove()"><span>Cumbre Líderes de BDC<br>Kia México 2026</span><img class="lc" src="logo-cdk.png" alt="CDK" onerror="this.remove()"></div>
+  <div class="brand"><img class="lk" src="logo-kia.png" alt="Kia" onerror="this.remove()"><img class="lcu" src="logo-cumbre.png" alt="Cumbre Nacional de Líderes BDC 2026" onerror="this.remove()"><img class="lc" src="logo-cdk.png" alt="CDK" onerror="this.remove()"></div>
   <div id="hdr"><div class="eyebrow">Ficha de desempeño BDC</div><h1>Tu ficha</h1><div class="sub">Información confidencial de tu agencia</div></div>
 </div></header>
 
 <main class="wrap">
   <!-- Sin enlace -->
   <section id="vNoLink" class="gate" hidden>
-    <div class="card"><h2 style="margin-top:0">Escanea tu QR</h2><p>Para abrir tu ficha escanea el código QR de la tarjeta que recibiste en la Cumbre Líderes de BDC Kia México 2026.</p></div>
+    <div class="card"><h2 style="margin-top:0">Escanea tu QR</h2><p>Para abrir tu ficha escanea el código QR de la tarjeta que recibiste en la Cumbre Nacional de Líderes BDC 2026.</p></div>
   </section>
 
   <!-- PIN -->
@@ -157,6 +180,13 @@ body.has-cd{padding-bottom:84px}
     <h2>Lo que vale cerrar la brecha</h2>
     <div class="opp" id="opp"></div>
     <p class="note" id="oppNote"></p>
+
+    <div id="ppWrap">
+      <h2>Preguntas poderosas</h2>
+      <p class="pp-lead" id="ppLead"></p>
+      <div id="ppPri"></div>
+      <div class="ppMore" id="ppMore"></div>
+    </div>
 
     <h2>Tu plan de acción</h2>
     <form class="plan" id="plan" novalidate>
@@ -200,7 +230,7 @@ body.has-cd{padding-bottom:84px}
 
   <div class="cd" id="cd" hidden role="status" aria-live="off"><div><div class="l" id="cdL">Tu plan vence en</div><div class="t" id="cdT">—</div></div><a href="#plan" id="cdGo">Ir a mi plan</a></div>
   <div class="modal" id="warn" hidden role="alertdialog" aria-labelledby="warnH"><div class="box"><h3 id="warnH">Falta 1 hora</h3><p>El plazo para enviar el plan de acción de tu agencia cierra hoy a las 2:00 p.m. Si ya lo llenaste, envíalo ahora.</p><button class="primary" type="button" id="warnOk" style="margin-top:0">Ir a mi plan</button></div></div>
-  <footer>Elaborado por CDK Global · Cumbre Líderes de BDC Kia México 2026 · 18 y 19 de noviembre<br><span id="fuente">Fuente: CDK SYSTEM</span></footer>
+  <footer>Elaborado por CDK Global · Cumbre Nacional de Líderes BDC 2026 · 18 y 19 de noviembre<br><span id="fuente">Fuente: CDK SYSTEM</span></footer>
 </main>
 
 <script>
@@ -270,11 +300,12 @@ function open(){
   startCountdown();
   document.title = 'Ficha BDC · ' + D.agencia;
   if (D.soloPlan){
-    $('hdr').innerHTML = `<div class="eyebrow">Plan de acción BDC</div><h1>${esc(D.agencia)}</h1><div class="sub">${esc(D.grupo ? D.grupo + ' · ' : '')}Cumbre Líderes de BDC Kia México 2026</div>`;
+    $('hdr').innerHTML = `<div class="eyebrow">Plan de acción BDC</div><h1>${esc(D.agencia)}</h1><div class="sub">${esc(D.grupo ? D.grupo + ' · ' : '')}Cumbre Nacional de Líderes BDC 2026</div>`;
     ['stage','kpis','tFuentes','trendWrap','diag','opp'].forEach(id => { const el = $(id); const sec = el.closest('.tbl') || el; sec.hidden = true; });
     document.querySelectorAll('#vFicha > h2, #vFicha > p.note').forEach(el => { if (!/plan de acción/i.test(el.textContent)) el.hidden = true; });
     $('stage').insertAdjacentHTML('afterend', `<div class="stage" style="border-left-color:var(--ink)"><div><small>Tu agencia</small><strong>PLAN DE ACCIÓN</strong></div><div class="big">${esc(D.nota || 'Tu agencia no tiene registros suficientes en CDK SYSTEM para el periodo evaluado. Registra tu plan para arrancar.')}</div></div>`);
     if (D.fuente) $('fuente').textContent = 'Fuente: ' + D.fuente;
+    renderPP();
     buildForm();
     const last0 = store.get('sent:' + FID);
     if (last0 && last0.ok) { renderDone(last0.payload, last0.note); } else show('vFicha');
@@ -307,10 +338,75 @@ function open(){
   $('opp').innerHTML = D.oportunidad.map(o => `<div><div class="n">${o.n > 0 ? '+' : ''}${o.n}</div><div class="l">unidades al mes ${esc(o.lbl)}</div></div>`).join('');
   $('oppNote').textContent = `Hoy: ≈${D.base.hoy} unidades al mes provenientes de cita. Estimación que mueve solo esta etapa y deja las demás constantes.`;
 
+  renderPP();
   buildForm();
   const last = store.get('sent:' + FID);
   if (last && last.ok) { renderDone(last.payload, last.note); } else show('vFicha');
   window.scrollTo(0, 0);
+}
+
+/* ===== Preguntas poderosas ===== */
+const PP_TOPICS = [['kpi','Tableros de KPI’s'],['lid','Liderazgo'],['coach','Coaching'],['efi','Eficiencia: contacto y conversión']];
+const PP = {
+  A1:{ t:'kpi', h:'Del reporte a la conversación',
+    f:'Un tablero de indicadores tiene valor cuando deja de ser un reporte y se convierte en una herramienta que alinea al equipo, provoca conversaciones y genera decisiones.',
+    q:['¿Mi tablero comunica claramente la estrategia?','¿Quién más necesita conocer mis indicadores para tomar mejores decisiones?'],
+    a:'Abre tu próxima junta de equipo con un solo indicador y una pregunta: ¿qué haríamos distinto?' },
+  A2:{ t:'kpi', h:'Dato o intuición',
+    f:'Lo que no se mide se opina; lo que se mide se decide.',
+    q:['¿Qué decisión tomaste este mes por intuición que podrías haber respaldado con un dato?'],
+    a:'Elige una decisión pendiente y revisa qué indicador la respalda antes de tomarla.' },
+  B1:{ t:'lid', h:'¿Escalera o serpiente?',
+    f:'En el tablero, las escaleras te impulsan y las serpientes te hacen retroceder. En el BDC, cada decisión de un líder acerca o aleja a su equipo del éxito.',
+    q:['¿Tu liderazgo facilita que las personas alcancen sus objetivos o les pone obstáculos?','¿Das herramientas, seguimiento y retroalimentación, o solo exiges resultados?'],
+    c:'La pregunta no es cuántas escaleras encontraste hoy, sino cuántas estás construyendo para tu equipo.' },
+  B2:{ t:'lid', h:'Lo que otros logran',
+    f:'El éxito de un líder no se mide por lo que logra individualmente, sino por lo que consigue que otros logren.',
+    q:['Si mañana dejaras de liderar a tu equipo, ¿seguirían implementando el programa como es?'],
+    a:'Identifica una tarea que hoy solo haces tú y enséñasela a alguien de tu equipo.' },
+  C1:{ t:'coach', h:'La persona detrás del indicador',
+    f:'No se puede desarrollar el potencial de un equipo que no te has dado la oportunidad de conocer.',
+    q:['¿Sabes qué motiva a cada persona de tu BDC?','¿Conoces sus fortalezas, sus áreas de oportunidad y lo que le cuesta trabajo?','¿Te has tomado el tiempo de escucharla, acompañarla y hacerle coaching?'],
+    a:'Ten una conversación uno a uno de 15 minutos con cada asesor este mes.' },
+  C2:{ t:'coach', h:'El indicador como herramienta de desarrollo',
+    f:'El mismo número puede usarse para presionar o para hacer crecer.',
+    q:['¿Uso los indicadores para desarrollar a mi equipo o solo para exigir resultados?'],
+    a:'En tu próxima retroalimentación, pregunta antes de señalar: “¿Qué te está frenando?”' },
+  D1:{ t:'efi', h:'¿Cuánto vale un minuto para tu cliente?',
+    f:'Cuando un prospecto escribe, su interés está en el punto más alto. Cada minuto sin respuesta lo enfría y le da terreno a la competencia.',
+    q:['¿Tus turnos están pensados para cuando el cliente nos busca o para cuando a nosotros nos conviene?','¿Quién responde por los leads que nadie atendió?'],
+    a:'Revisa en qué horarios entran más leads y compáralo con la cobertura de tu equipo.' },
+  D2:{ t:'efi', h:'El embudo con fugas',
+    f:'Pedir más prospectos parece la solución más rápida, pero traer más gente a un embudo con fugas solo multiplica las pérdidas.',
+    q:['¿Dónde estás poniendo tu energía y tu presupuesto: en atraer más o en cuidar mejor lo que ya llegó?'],
+    a:'Ubica la etapa del embudo donde más se pierde (contacto, cita, asistencia o cierre) y atiende solo esa.' }
+};
+function ppPriority(){
+  if (D.soloPlan) return { ids:['A2','A1'], why:'Tu agencia aún no tiene registros suficientes: medir es el primer paso para mejorar.' };
+  if (D.kpi && D.kpi.neta && D.kpi.neta.estado === 'ok') return { ids:['B2','A1'], why:'Tu tasa neta es una fortaleza: el reto es que el modelo no dependa de una sola persona.' };
+  const m = {
+    agend:{ ids:['D1'], why:'Tu etapa a mover es agendamiento: la velocidad de respuesta decide cuántos contactos llegan a cita.' },
+    cump:{ ids:['C1','B1'], why:'Tu etapa a mover es cumplimiento: que la cita llegue depende de un equipo acompañado y bien liderado.' },
+    cierre:{ ids:['D2'], why:'Tu etapa a mover es cierre: antes de pedir más prospectos, cuida los que ya están en sala.' }
+  };
+  return m[D.etapa] || { ids:['A1'], why:'' };
+}
+function ppCard(id, pri){
+  const x = PP[id], tn = PP_TOPICS.find(t => t[0] === x.t)[1];
+  return `<article class="pq${pri ? ' pri' : ''}"><div class="tp"><span>${esc(tn)}</span>${pri ? '<em>Para tu etapa</em>' : ''}</div>
+    <h3>${esc(x.h)}</h3><blockquote>${esc(x.f)}</blockquote>
+    <ul>${x.q.map(q => `<li>${esc(q)}</li>`).join('')}</ul>
+    ${x.c ? `<p class="cl">${esc(x.c)}</p>` : ''}
+    ${x.a ? `<div class="wk"><b>Esta semana</b>${esc(x.a)}</div>` : ''}</article>`;
+}
+function renderPP(){
+  const p = ppPriority();
+  $('ppLead').textContent = 'Ideas de los consultores de CDK Global para llevar tus resultados a tu equipo. ' + (p.why ? 'Empieza por aquí. ' + p.why : '');
+  $('ppPri').innerHTML = p.ids.map(id => ppCard(id, true)).join('');
+  $('ppMore').innerHTML = '<div class="mt">Más preguntas por tema</div>' + PP_TOPICS.map(([t, n]) => {
+    const ids = Object.keys(PP).filter(id => PP[id].t === t && !p.ids.includes(id));
+    return ids.length ? `<details><summary><span>${esc(n)}<small>${ids.length} ${ids.length === 1 ? 'pregunta' : 'preguntas'}</small></span></summary>${ids.map(id => ppCard(id, false)).join('')}</details>` : '';
+  }).join('');
 }
 
 /* ===== Formulario ===== */
@@ -456,10 +552,10 @@ function renderCal(){
 function addIcs(){
   const z = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const start = new Date(DEADLINE.getTime() - 3600000);
-  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDK Global//Cumbre Lideres de BDC Kia Mexico 2026//ES','METHOD:PUBLISH','BEGIN:VEVENT',
+  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//CDK Global//Cumbre Nacional de Lideres BDC 2026//ES','METHOD:PUBLISH','BEGIN:VEVENT',
     'UID:plan-bdc-' + FID + '@cumbre-bdc-kia','DTSTAMP:' + z(new Date()),'DTSTART:' + z(start),'DTEND:' + z(DEADLINE),
     'SUMMARY:Entregar plan de acción BDC · ' + (D ? D.agencia : 'Kia'),
-    'DESCRIPTION:Cumbre Líderes de BDC Kia México 2026. El plazo cierra a las 2:00 p.m. Abre tu ficha con el QR de tu tarjeta y tu código de 4 dígitos.',
+    'DESCRIPTION:Cumbre Nacional de Líderes BDC 2026. El plazo cierra a las 2:00 p.m. Abre tu ficha con el QR de tu tarjeta y tu código de 4 dígitos.',
     'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Falta 1 hora para entregar tu plan de acción BDC','TRIGGER:PT0M','END:VALARM',
     'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Mañana vence tu plan de acción BDC','TRIGGER:-P1D','END:VALARM',
     'END:VEVENT','END:VCALENDAR'].join('\r\n');

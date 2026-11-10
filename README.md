@@ -1,6 +1,6 @@
 # Fichas BDC · Red Kia
 
-Sitio de la **Cumbre Líderes de BDC Kia México 2026** (18 y 19 de noviembre) · CDK Global.
+Sitio de la **Cumbre Nacional de Líderes BDC 2026** (18 y 19 de noviembre) · CDK Global.
 Cada agencia abre su ficha de desempeño y registra su plan de acción a 30 días desde el celular.
 
 - Cada ficha se abre solo con el enlace del QR impreso más un código de 4 dígitos.
