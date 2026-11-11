@@ -76,6 +76,19 @@ button{font:inherit;font-weight:700;font-size:17px;border:0;border-radius:10px;p
 .primary:disabled{opacity:.6}
 .ghost{background:transparent;color:var(--ink);border:1px solid var(--ink);border-radius:0}
 .err{color:var(--red);font-size:14px;margin-top:10px;font-weight:600}
+/* 3. Acciones: después de la cumbre */
+.next{position:relative;overflow:hidden;background:var(--ink);color:#fff;border-radius:12px;padding:18px 16px 16px;margin:28px 0 14px;border-top:4px solid var(--red)}
+.next .nx-bars{position:absolute;right:-4px;bottom:-4px;width:96px;height:56px;fill:#CE8A6C;opacity:.2}
+.next .nx-eye{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#CE8A6C}
+.next h2{position:relative;font-size:26px;line-height:1.12;margin:6px 0 6px;color:#fff;max-width:19ch;border:0;padding:0;text-transform:none;letter-spacing:0}.next h2::after{display:none}
+.next .nx-cta{font-size:18px;font-weight:700;color:#CE8A6C;margin:0 0 6px}
+.next p{position:relative;margin:0 0 12px;font-size:15px;color:#DADBDC;max-width:34ch}
+.next .nx-q{position:relative;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.next .nx-q li{font-size:14px;font-weight:700;color:#fff;padding-left:22px;position:relative}
+.next .nx-q li::before{content:"";position:absolute;left:0;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--red)}
+.pdfb,.pdfb2{width:100%;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px}
+.pdfb svg,.pdfb2 svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pdfb:disabled,.pdfb2:disabled{opacity:.6}
 .saved{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
 /* pin */
 .gate{max-width:420px;margin:40px auto 0;text-align:center}
@@ -188,7 +201,14 @@ body.has-cd{padding-bottom:84px}
       <div class="ppMore" id="ppMore"></div>
     </div>
 
-    <h2>Tu plan de acción</h2>
+    <div class="next" id="planHead" role="group" aria-labelledby="nxH">
+      <svg class="nx-bars" viewBox="0 0 120 70" aria-hidden="true"><rect x="0" y="52" width="14" height="18"/><rect x="18" y="42" width="14" height="28"/><rect x="36" y="32" width="14" height="38"/><rect x="54" y="22" width="14" height="48"/><rect x="72" y="10" width="14" height="60"/><path d="M90 70V4l8 10 10 22 12 10v24z"/></svg>
+      <div class="nx-eye">Tu plan de acción</div>
+      <h2 id="nxH">Y después de la cumbre, ¿qué sigue?</h2>
+      <p class="nx-cta">Plasma tu plan de acción</p>
+      <p>Lo que escribas aquí es lo que tu equipo empezará a hacer a partir del lunes.</p>
+      <ul class="nx-q"><li>¿Qué hará distinto tu equipo?</li><li>¿Quién es dueño de cada acción?</li><li>¿Cuándo lo vas a revisar?</li></ul>
+    </div>
     <form class="plan" id="plan" novalidate>
       <div class="due"><div><small>Fecha límite de entrega</small><b id="dueTxt"></b></div></div>
       <div class="calv" id="calv"></div>
@@ -212,6 +232,7 @@ body.has-cd{padding-bottom:84px}
       <div class="row2" style="margin-top:10px"><input id="correo" type="email" placeholder="Correo" autocomplete="email"><input id="tel" type="tel" placeholder="Celular" autocomplete="tel"></div>
 
       <button class="primary" type="submit" id="send">Enviar mi plan</button>
+      <button class="ghost pdfb" type="button" id="pdfBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg>Guardar ficha y plan en PDF</button>
       <div class="err" id="planErr" role="alert"></div>
       <div class="saved" id="saved"></div>
     </form>
@@ -224,7 +245,9 @@ body.has-cd{padding-bottom:84px}
       <h2 style="border:0;margin:6px 0">Plan recibido</h2>
       <p id="doneMsg">Gracias. CDK Global revisará tu plan y te enviará retroalimentación.</p>
       <dl class="sum" id="sum"></dl>
-      <button class="ghost" id="edit" type="button" style="margin-top:16px">Editar y reenviar</button>
+      <button class="primary pdfb2" id="pdfBtn2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg>Descargar ficha y plan en PDF</button>
+      <div class="err" id="pdfErr2" role="alert"></div>
+      <button class="ghost" id="edit" type="button" style="margin-top:12px">Editar y reenviar</button>
     </div>
   </section>
 
@@ -499,6 +522,290 @@ function renderDone(p, note){
 }
 $('edit').addEventListener('click', () => { const s = store.get('sent:' + FID); if (s) fill(s.payload); store.set('sent:' + FID, null); show('vFicha'); document.getElementById('plan').scrollIntoView(); });
 
+/* ===== Plan en PDF ===== */
+let jsPdfP = null;
+function loadJsPdf(){
+  if (window.jspdf) return Promise.resolve(window.jspdf.jsPDF);
+  return jsPdfP || (jsPdfP = new Promise((res, rej) => {
+    const s = document.createElement('script'); s.src = 'jspdf.min.js';
+    s.onload = () => res(window.jspdf.jsPDF); s.onerror = () => { jsPdfP = null; rej(new Error('no_lib')); };
+    document.head.appendChild(s);
+  }));
+}
+function imgData(src){
+  return new Promise(res => {
+    const i = new Image();
+    i.onload = () => { try { const c = document.createElement('canvas'); c.width = i.naturalWidth; c.height = i.naturalHeight; c.getContext('2d').drawImage(i, 0, 0); res({ d: c.toDataURL('image/png'), w: i.naturalWidth, h: i.naturalHeight }); } catch(e){ res(null); } };
+    i.onerror = () => res(null); i.src = src;
+  });
+}
+const fDate = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? `${m[3]}/${m[2]}/${m[1]}` : (s || '—'); };
+const fStamp = d => d.toLocaleString('es-MX', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+async function makePdf(p, sent){
+  const [JsPDF, kia, cdk, cum] = await Promise.all([loadJsPdf(), imgData('logo-kia.png'), imgData('logo-cdk.png'), imgData('logo-cumbre.png')]);
+  const doc = new JsPDF({ unit:'mm', format:'letter' });
+  const W = 215.9, H = 279.4, M = 16, CW = W - 2*M, BOT = H - 20;
+  const INK = [5,20,31], RED = [234,0,41], GRAY = [55,67,75], MUTED = [105,114,120], LINE = [218,219,220], COP = [206,138,108], OK = [30,122,69], MID = [138,90,0], BG = [248,248,248];
+  const ST = { ok:OK, mid:MID, bad:RED };
+  const col = c => doc.setTextColor(c[0], c[1], c[2]);
+  const font = (st, sz, c) => { doc.setFont('helvetica', st); doc.setFontSize(sz); if (c) col(c); };
+  const LH = sz => sz * 0.43;
+  const agencia = p.agencia || D.agencia || '';
+  let y = 0;
+  // Encabezados
+  function headFull(){
+    doc.setFillColor(...INK); doc.rect(0, 0, W, 44, 'F'); doc.setFillColor(...RED); doc.rect(0, 44, W, 1.4, 'F');
+    let lx = M;
+    if (kia){ const h = 6.5, w = h * kia.w / kia.h; doc.addImage(kia.d, 'PNG', lx, 11, w, h); lx += w + 7; }
+    if (cdk) doc.addImage(cdk.d, 'PNG', lx, 10.3, 7.8, 7.8);
+    if (cum) doc.addImage(cum.d, 'PNG', W - M - 30, 7, 30, 30);
+    font('bold', 8, [180,185,188]); doc.text('FICHA DE DESEMPEÑO BDC · TU BRÚJULA Y TU PLAN', M, 27, { charSpace: 0.5 });
+    font('bold', 18, [255,255,255]); doc.text(doc.splitTextToSize(agencia, CW - 40)[0], M, 35.5);
+    font('normal', 9, [189,189,189]);
+    const sub = D.soloPlan ? (D.grupo ? D.grupo + ' · ' : '') + 'Plan de acción BDC' : `${D.grupo ? D.grupo + ' · ' : ''}${D.periodo} · ${D.asesores} asesores en promedio`;
+    doc.text(sub, M, 41);
+    y = 56;
+  }
+  function headCont(){
+    doc.setFillColor(...INK); doc.rect(0, 0, W, 13, 'F'); doc.setFillColor(...RED); doc.rect(0, 13, W, 1, 'F');
+    if (kia){ const h = 4.2, w = h * kia.w / kia.h; doc.addImage(kia.d, 'PNG', M, 4.4, w, h); }
+    font('bold', 8.5, [255,255,255]); doc.text(agencia, W - M, 8.4, { align:'right' });
+    y = 24;
+  }
+  const newPage = () => { doc.addPage(); headCont(); };
+  const ensure = n => { if (y + n > BOT) newPage(); };
+  function h2(t, need){
+    ensure(need || 18);
+    font('bold', 12.5, INK); doc.text(t, M, y);
+    doc.setFillColor(...RED); doc.rect(M, y + 2, 10, 0.9, 'F');
+    y += 8;
+  }
+  function para(t, sz, c, st){
+    font(st || 'normal', sz, c); const l = doc.splitTextToSize(t, CW); ensure(l.length * LH(sz) + 2);
+    doc.text(l, M, y); y += l.length * LH(sz) + 2.5;
+  }
+  // Texto con **negritas**
+  function rich(t, x, w, sz, c){
+    const segs = String(t).split(/(\*\*.+?\*\*)/).filter(Boolean).map(s => /^\*\*/.test(s) ? { b:true, s:s.slice(2,-2) } : { b:false, s });
+    const words = []; segs.forEach(g => g.s.split(/(\s+)/).filter(Boolean).forEach(w2 => words.push({ b:g.b, s:w2 })));
+    const lines = [[]]; let lw = 0;
+    words.forEach(wd => {
+      font(wd.b ? 'bold' : 'normal', sz); const ww = doc.getTextWidth(wd.s);
+      if (/^\s+$/.test(wd.s)){ if (lines[lines.length-1].length){ lines[lines.length-1].push(wd); lw += ww; } return; }
+      if (lw + ww > w && lines[lines.length-1].length){ const L = lines[lines.length-1]; while (L.length && /^\s+$/.test(L[L.length-1].s)) L.pop(); lines.push([]); lw = 0; }
+      lines[lines.length-1].push(wd); lw += ww;
+    });
+    ensure(lines.length * LH(sz) + 1);
+    lines.forEach(L => { let xx = x; L.forEach(wd => { font(wd.b ? 'bold' : 'normal', sz, wd.b ? INK : c); doc.text(wd.s, xx, y); xx += doc.getTextWidth(wd.s); }); y += LH(sz); });
+  }
+  function table(head, rows, widths, opt){
+    const rh = 6.6, x0 = M;
+    const drawHead = () => {
+      doc.setFillColor(...INK); doc.rect(x0, y, CW, rh, 'F'); font('bold', 7.8, [255,255,255]);
+      let x = x0; head.forEach((h, i) => { doc.text(h, i ? x + widths[i] - 2 : x + 2, y + 4.4, { align: i ? 'right' : 'left' }); x += widths[i]; });
+      y += rh;
+    };
+    ensure(rh * 2 + 2); drawHead();
+    rows.forEach((r, ri) => {
+      if (y + rh > BOT){ newPage(); drawHead(); }
+      const tot = opt && opt.total && ri === rows.length - 1;
+      if (tot){ doc.setFillColor(238,239,240); doc.rect(x0, y, CW, rh, 'F'); } else if (ri % 2){ doc.setFillColor(...BG); doc.rect(x0, y, CW, rh, 'F'); }
+      let x = x0;
+      r.forEach((c, i) => {
+        const low = typeof c === 'object' && c && c.lo; const txt = typeof c === 'object' && c ? c.t : String(c);
+        font(tot || low ? 'bold' : 'normal', 8.3, low ? RED : (i ? GRAY : INK));
+        doc.text(i ? txt : doc.splitTextToSize(txt, widths[0] - 3)[0], i ? x + widths[i] - 2 : x + 2, y + 4.5, { align: i ? 'right' : 'left' });
+        x += widths[i];
+      });
+      doc.setDrawColor(...LINE); doc.line(x0, y + rh, x0 + CW, y + rh);
+      y += rh;
+    });
+    y += 3;
+  }
+  function ppBlock(id, full){
+    const x = PP[id], tn = PP_TOPICS.find(t => t[0] === x.t)[1];
+    if (!full){
+      font('bold', 9.5); const tl = doc.splitTextToSize(`${tn} · ${x.h}`, CW - 4);
+      font('normal', 9); const ql = x.q.flatMap(q => doc.splitTextToSize('• ' + q, CW - 8));
+      ensure(tl.length * LH(9.5) + ql.length * LH(9) + 4);
+      font('bold', 9.5, INK); doc.text(tl, M, y); y += tl.length * LH(9.5) + 0.5;
+      font('normal', 9, GRAY); doc.text(ql, M + 3, y); y += ql.length * LH(9) + 3;
+      return;
+    }
+    const iw = CW - 10;
+    font('italic', 10); const fl = doc.splitTextToSize(x.f, iw - 4);
+    font('bold', 10); const ql = x.q.map(q => doc.splitTextToSize(q, iw - 5));
+    font('normal', 9.5); const cl = x.c ? doc.splitTextToSize(x.c, iw) : [];
+    const al = x.a ? doc.splitTextToSize(x.a, iw - 6) : [];
+    const hgt = 14 + fl.length * LH(10) + 3 + ql.reduce((s, l) => s + l.length * LH(10) + 1.2, 0) + (cl.length ? cl.length * LH(9.5) + 2 : 0) + (al.length ? al.length * LH(9.5) + 9 : 0) + 3;
+    ensure(hgt);
+    const y0 = y;
+    doc.setDrawColor(...LINE); doc.setFillColor(255,255,255); doc.roundedRect(M, y0, CW, hgt, 2, 2, 'FD');
+    doc.setFillColor(...RED); doc.rect(M, y0, 1.6, hgt, 'F');
+    let yy = y0 + 6;
+    font('bold', 7.5, MUTED); doc.text(tn.toUpperCase(), M + 6, yy, { charSpace: 0.4 });
+    doc.setFillColor(...RED); const tag = 'PARA TU ETAPA'; font('bold', 7); const tw = doc.getTextWidth(tag) + 4;
+    doc.roundedRect(W - M - 5 - tw, yy - 3.4, tw, 4.8, 1, 1, 'F'); col([255,255,255]); doc.text(tag, W - M - 5 - tw + 2, yy);
+    yy += 6.5; font('bold', 12, INK); doc.text(x.h, M + 6, yy); yy += 6;
+    doc.setDrawColor(...LINE); doc.setLineWidth(0.8); doc.line(M + 6, yy - 3.2, M + 6, yy - 3.2 + fl.length * LH(10) + 0.6); doc.setLineWidth(0.2);
+    font('italic', 10, GRAY); doc.text(fl, M + 9, yy); yy += fl.length * LH(10) + 3;
+    ql.forEach(l => { font('bold', 10, INK); doc.text('•', M + 6, yy); doc.text(l, M + 10, yy); yy += l.length * LH(10) + 1.2; });
+    if (cl.length){ yy += 1; font('normal', 9.5, GRAY); doc.text(cl, M + 6, yy); yy += cl.length * LH(9.5) + 1; }
+    if (al.length){
+      yy += 1; const bh = al.length * LH(9.5) + 8.5;
+      doc.setFillColor(...BG); doc.roundedRect(M + 6, yy, iw, bh, 1.5, 1.5, 'F');
+      font('bold', 7, INK); doc.text('ESTA SEMANA', M + 9, yy + 4.5, { charSpace: 0.4 });
+      font('normal', 9.5, GRAY); doc.text(al, M + 9, yy + 8.6);
+    }
+    y = y0 + hgt + 5;
+  }
+
+  /* ---------- Página 1: la brújula ---------- */
+  headFull();
+  font('bold', 15, INK); doc.text('Tu brújula', M, y); y += 5.5;
+  para(D.soloPlan ? 'Las preguntas para guiar a tu equipo. Al final, tu plan de acción.' : `Lo que dicen tus datos de ${D.periodo} y las preguntas para guiar a tu equipo. Al final, tu plan de acción.`, 10, MUTED);
+  y += 2;
+  if (D.soloPlan){
+    const l = (font('normal', 10.5), doc.splitTextToSize(D.nota || 'Tu agencia no tiene registros suficientes en CDK SYSTEM para el periodo evaluado. Registra tu plan para arrancar.', CW - 12));
+    const hh = l.length * LH(10.5) + 14; ensure(hh);
+    doc.setDrawColor(...LINE); doc.setFillColor(255,255,255); doc.roundedRect(M, y, CW, hh, 2, 2, 'FD'); doc.setFillColor(...INK); doc.rect(M, y, 1.8, hh, 'F');
+    font('bold', 7.5, MUTED); doc.text('TU AGENCIA · PLAN DE ACCIÓN', M + 6, y + 6, { charSpace: 0.4 });
+    font('normal', 10.5, INK); doc.text(l, M + 6, y + 11.5); y += hh + 6;
+  } else {
+    // Etapa a mover
+    const ek = D.kpi[D.etapa];
+    const msg = D.etapa === 'cump' ? `${Math.round(100 - ek.v)} de cada 100 citas no llegan` : D.etapa === 'agend' ? `${Math.round(100 - ek.v)} de cada 100 contactos no llegan a cita` : `${Math.round(100 - ek.v)} de cada 100 citas en sala no compran`;
+    doc.setDrawColor(...LINE); doc.setFillColor(255,255,255); doc.roundedRect(M, y, CW, 17, 2, 2, 'FD'); doc.setFillColor(...RED); doc.rect(M, y, 1.8, 17, 'F');
+    font('bold', 7.5, MUTED); doc.text('TU ETAPA A MOVER', M + 6, y + 6.5, { charSpace: 0.4 });
+    font('bold', 14, INK); doc.text(D.etapaNombre.toUpperCase(), M + 6, y + 13);
+    font('bold', 12, RED); doc.text(doc.splitTextToSize(msg, CW / 2), W - M - 5, y + 10.5, { align:'right' });
+    y += 25;
+    // Indicadores
+    h2('Tus indicadores', 46);
+    const names = { agend:'Agendamiento', conf:'Confirmación', cump:'Cumplimiento', cierre:'Cierre', neta:'Tasa neta' };
+    const gap = 3, tw = (CW - gap * 4) / 5, th = 31;
+    Object.keys(names).forEach((k, i) => {
+      const x = M + i * (tw + gap), v = D.kpi[k], c = ST[v.estado] || MUTED;
+      doc.setDrawColor(...LINE); doc.setFillColor(255,255,255); doc.roundedRect(x, y, tw, th, 1.5, 1.5, 'FD'); doc.setFillColor(...c); doc.rect(x, y, tw, 1.3, 'F');
+      font('bold', 7.5, INK); doc.text(names[k], x + 2.5, y + 6);
+      font('bold', 15, c); doc.text(pc(v.v), x + 2.5, y + 13.5);
+      font('bold', 6.5, c); doc.text(TAG[v.estado] || '', x + 2.5, y + 18);
+      font('normal', 6.5, MUTED); doc.text(`Red ${pc(v.red)} · Mejores ${pc(v.top)}`, x + 2.5, y + 23); doc.text(`Lugar ${v.rank} de ${D.n}`, x + 2.5, y + 26.8);
+    });
+    y += th + 4;
+    para('Comparado con el promedio de la red Kia y con el grupo de mejores agencias (cuartil superior por tasa neta).', 8, MUTED);
+    y += 3;
+    // Embudo por fuente
+    h2('Embudo por fuente', 40);
+    const lo = (v, r) => v < r * 0.9;
+    const fr = D.fuentes.map(f => [f.f, f.cont.toLocaleString('es-MX'), f.cit.toLocaleString('es-MX'), { t:pc(f.agend), lo:lo(f.agend, f.ref.agend) }, { t:pc(f.cump), lo:lo(f.cump, f.ref.cump) }, { t:pc(f.cierre), lo:lo(f.cierre, f.ref.cierre) }, pc(f.neta)]);
+    const T = D.totales;
+    fr.push(['Total agencia', T.cont.toLocaleString('es-MX'), T.cit.toLocaleString('es-MX'), pc(D.kpi.agend.v), pc(D.kpi.cump.v), pc(D.kpi.cierre.v), pc(D.kpi.neta.v)]);
+    table(['Fuente','Contactos','Citas','Agend.','Cumpl.','Cierre','Neta'], fr, [CW - 6 * 22.33, 22.33, 22.33, 22.33, 22.33, 22.33, 22.35], { total:true });
+    para(`En rojo: más de 10% debajo de la red en esa fuente. Las ventas de cita explican el ${Math.min(100, Math.round(T.citV / T.vtas * 100))}% de sus ${T.vtas.toLocaleString('es-MX')} unidades (red: ${D.redMix || 78}%).`, 8, MUTED);
+    y += 3;
+    // Tendencia
+    if (D.tendencia && D.tendencia.length){
+      h2('Tendencia', 30);
+      table(['Periodo','Agend.','Confirm.','Cumpl.','Cierre','Neta'], D.tendencia.map(t => [t.p, pc(t.agend), pc(t.conf), pc(t.cump), pc(t.cierre), pc(t.neta)]), [CW - 5 * 26, 26, 26, 26, 26, 26]);
+      y += 3;
+    }
+    // Diagnóstico
+    h2('Diagnóstico', 24);
+    D.diagnostico.forEach(t => { ensure(10); doc.setFillColor(...RED); doc.circle(M + 1.3, y - 1.3, 0.9, 'F'); rich(t, M + 5, CW - 5, 10, GRAY); y += 2; });
+    y += 3;
+    // Oportunidad
+    h2('Lo que vale cerrar la brecha', 34);
+    const n = D.oportunidad.length, og = 4, ow = (CW - og * (n - 1)) / n, oh = 22;
+    D.oportunidad.forEach((o, i) => {
+      const x = M + i * (ow + og);
+      doc.setDrawColor(...LINE); doc.setFillColor(255,255,255); doc.roundedRect(x, y, ow, oh, 2, 2, 'FD');
+      font('bold', 20, INK); doc.text((o.n > 0 ? '+' : '') + o.n, x + ow / 2, y + 10, { align:'center' });
+      font('normal', 8.5, GRAY); doc.text(doc.splitTextToSize('unidades al mes ' + o.lbl, ow - 6), x + ow / 2, y + 15.5, { align:'center' });
+    });
+    y += oh + 4;
+    para(`Hoy: aprox. ${D.base.hoy} unidades al mes provenientes de cita. Estimación que mueve solo esta etapa y deja las demás constantes.`, 8, MUTED);
+    y += 3;
+  }
+  // Preguntas poderosas
+  const pri = ppPriority();
+  h2('Preguntas poderosas', 60);
+  para('Ideas de los consultores de CDK Global para llevar tus resultados a tu equipo. ' + (pri.why ? 'Empieza por aquí. ' + pri.why : ''), 9.5, GRAY);
+  y += 1;
+  pri.ids.forEach(id => ppBlock(id, true));
+  const rest = Object.keys(PP).filter(id => !pri.ids.includes(id));
+  if (rest.length){ ensure(14); font('bold', 8, MUTED); doc.text('MÁS PREGUNTAS POR TEMA', M, y, { charSpace: 0.5 }); y += 5.5; rest.forEach(id => ppBlock(id, false)); }
+
+  /* ---------- Plan de acción ---------- */
+  if (y + 180 > BOT) newPage(); else { y += 6; doc.setDrawColor(...INK); doc.setLineWidth(0.6); doc.line(M, y, W - M, y); doc.setLineWidth(0.2); y += 10; }
+  font('bold', 7.5, COP); doc.text('TU PLAN DE ACCIÓN · 30 DÍAS', M, y, { charSpace: 0.5 }); y += 7;
+  font('bold', 18, INK); doc.text('Y después de la cumbre, ¿qué sigue?', M, y); y += 6;
+  font('normal', 9.5, sent ? OK : MUTED);
+  doc.text(sent ? 'Plan enviado a CDK Global el ' + fStamp(new Date(p.enviado || Date.now())) : 'Borrador · aún no enviado a CDK Global', M, y);
+  y += 7; doc.setDrawColor(...LINE); doc.setFillColor(...BG); doc.roundedRect(M, y, CW, 20, 2, 2, 'FD');
+  const cells = [['Etapa a mover', p.etapa || '—'], ['Hoy', p.indicador_hoy === '' || p.indicador_hoy == null ? '—' : pc(p.indicador_hoy)], ['Meta a 30 días', p.meta_30d ? p.meta_30d + '%' : '—']];
+  cells.forEach(([l, v], i) => {
+    const x = M + 6 + i * CW / 3;
+    font('bold', 7.5, MUTED); doc.text(l.toUpperCase(), x, y + 7.5, { charSpace: 0.4 });
+    font('bold', 14, i === 2 ? RED : INK); doc.text(String(v), x, y + 15);
+  });
+  y += 30;
+  const sec = t => { ensure(14); font('bold', 8.5, COP); doc.text(t.toUpperCase(), M, y, { charSpace: 0.6 }); doc.setDrawColor(...LINE); doc.line(M, y + 2, W - M, y + 2); y += 8; };
+  sec('Acciones');
+  const acts = (p.acciones || []).filter(a => a.accion || a.responsable || a.fecha);
+  if (!acts.length){ font('italic', 10, MUTED); doc.text('Sin acciones registradas.', M, y); y += 8; }
+  acts.forEach((a, i) => {
+    font('normal', 11); const lines = doc.splitTextToSize(a.accion || '—', CW - 12);
+    ensure(lines.length * 5 + 14);
+    doc.setFillColor(...INK); doc.circle(M + 3.2, y - 1.4, 3.2, 'F');
+    font('bold', 9, [255,255,255]); doc.text(String(i + 1), M + 3.2, y - 0.2, { align: 'center' });
+    font('normal', 11, INK); doc.text(lines, M + 10, y);
+    y += lines.length * 5 + 1;
+    font('normal', 9, GRAY); doc.text('Responsable: ' + (a.responsable || '—') + '     Fecha compromiso: ' + fDate(a.fecha), M + 10, y);
+    y += 9;
+  });
+  if (p.apoyo){
+    sec('Apoyo que necesitan');
+    font('normal', 10.5); const l = doc.splitTextToSize(p.apoyo, CW); ensure(l.length * 5 + 4);
+    col(GRAY); doc.text(l, M, y); y += l.length * 5 + 6;
+  }
+  sec('Quién se compromete');
+  ensure(26);
+  [['Nombre', p.nombre], ['Puesto', p.puesto], ['Correo', p.correo], ['Celular', p.telefono]].forEach(([l, v], i) => {
+    const x = M + (i % 2) * (CW / 2), yy = y + Math.floor(i / 2) * 11;
+    font('bold', 7.5, MUTED); doc.text(l.toUpperCase(), x, yy, { charSpace: 0.4 });
+    font('normal', 10.5, INK); doc.text(doc.splitTextToSize(v || '—', CW / 2 - 6)[0], x, yy + 5);
+  });
+  y += 18;
+  ensure(22); y += 10;
+  doc.setDrawColor(...GRAY);
+  [['Firma de quien se compromete', M], ['Revisión CDK Global', M + CW / 2 + 6]].forEach(([t, x]) => {
+    doc.line(x, y, x + CW / 2 - 6, y); font('normal', 8.5, MUTED); doc.text(t, x, y + 5);
+  });
+  y += 11; font('bold', 8.5, INK); doc.text('Fecha límite de entrega: ' + DEADLINE_TXT + ' (hora del centro de México)', M, y);
+  // Pie en todas las páginas
+  const np = doc.getNumberOfPages();
+  for (let i = 1; i <= np; i++){
+    doc.setPage(i); doc.setDrawColor(...LINE); doc.line(M, H - 13, W - M, H - 13);
+    font('normal', 7.5, MUTED);
+    doc.text('Cumbre Nacional de Líderes BDC 2026 · Elaborado por CDK Global · Fuente: ' + (D.fuente || 'CDK SYSTEM'), M, H - 8.5);
+    doc.text('Generado el ' + fStamp(new Date()), M, H - 5);
+    font('bold', 8, MUTED); doc.text(`${i} / ${np}`, W - M, H - 8.5, { align:'right' });
+  }
+  const name = 'Ficha_y_plan_' + String(agencia || 'agencia').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '') + '.pdf';
+  try { doc.save(name); } catch(e){ window.open(doc.output('bloburl'), '_blank'); }
+}
+async function pdfClick(btn, errEl, getP, sent){
+  const p = getP();
+  errEl.textContent = '';
+  const t = btn.lastChild.textContent; btn.disabled = true; btn.lastChild.textContent = 'Generando PDF…';
+  try { await makePdf(p, sent); }
+  catch(e){ errEl.textContent = 'No se pudo generar el PDF. Revisa tu conexión e intenta de nuevo.'; }
+  finally { btn.disabled = false; btn.lastChild.textContent = t; }
+}
+$('pdfBtn').addEventListener('click', () => pdfClick($('pdfBtn'), $('planErr'), collect, false));
+$('pdfBtn2').addEventListener('click', () => { const s = store.get('sent:' + FID); pdfClick($('pdfBtn2'), $('pdfErr2'), () => (s && s.payload) || collect(), !!s); });
+
 /* ===== Cuenta regresiva, aviso de 1 hora y recordatorio ===== */
 let cdTimer = null;
 function fmt(ms){
@@ -529,8 +836,8 @@ function startCountdown(){
   };
   tick(); cdTimer = setInterval(tick, 1000);
 }
-$('warnOk').addEventListener('click', () => { $('warn').hidden = true; $('plan').scrollIntoView({ behavior:'smooth' }); });
-$('cdGo').addEventListener('click', e => { e.preventDefault(); $('plan').scrollIntoView({ behavior:'smooth' }); });
+$('warnOk').addEventListener('click', () => { $('warn').hidden = true; $('planHead').scrollIntoView({ behavior:'smooth' }); });
+$('cdGo').addEventListener('click', e => { e.preventDefault(); $('planHead').scrollIntoView({ behavior:'smooth' }); });
 function renderCal(){
   const y = 2026, mo = 10; // noviembre 2026
   const first = new Date(y, mo, 1).getDay(), days = new Date(y, mo + 1, 0).getDate();
