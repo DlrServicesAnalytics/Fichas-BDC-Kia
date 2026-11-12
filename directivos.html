@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light">
+<title>Portal de directivos · Red Kia BDC</title>
+<style>
+:root{--red:#EA0029;--red-soft:#FDECEF;--ink:#05141F;--gray:#37434B;--muted:#697278;--line:#DADBDC;--bg:#F4F5F6;--card:#FFFFFF;--ok:#1E7A45;--ok-soft:#E5F3EA;--mid:#8A5A00;--mid-soft:#FBF1DD;--cop:#CE8A6C}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--gray);font:15px/1.45 "Kia Signature",Arial,"Helvetica Neue",sans-serif;-webkit-text-size-adjust:100%}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 56px}
+header.top{background:var(--ink);color:#fff;padding:18px 16px 16px;padding-top:max(18px,env(safe-area-inset-top))}
+header.top .in{max-width:980px;margin:0 auto}
+.brand{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-bottom:12px}
+.brand .lk{height:22px;justify-self:start}.brand .lcu{height:68px;width:68px;border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,.35)}.brand .lc{height:26px;width:26px;justify-self:end}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#B4B9BC;font-weight:700}
+h1{font-size:26px;line-height:1.1;margin:4px 0 2px;color:#fff}
+.sub{font-size:13px;color:#BDBDBD}
+h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line);position:relative}
+h2::after{content:"";position:absolute;left:0;bottom:-1px;width:32px;height:2px;background:var(--red)}
+.card{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--line)}
+.note{font-size:12px;color:var(--muted);margin:8px 2px 0}
+/* gate */
+.gate{max-width:420px;margin:28px auto 0}
+.gate h2{margin-top:0}
+.pin{width:100%;font:inherit;font-size:30px;text-align:center;letter-spacing:.4em;padding:12px;border:1px solid #CFCFCF;border-radius:10px;color:var(--ink)}
+.pin:focus{outline:2px solid var(--red);border-color:var(--red)}
+.btn{display:block;width:100%;border:0;border-radius:10px;padding:14px 16px;font-weight:700;font-size:16px;background:var(--ink);color:#fff;text-align:center;text-decoration:none;margin-top:12px}
+.btn.red{background:var(--red)}
+.err{color:var(--red);font-weight:600;font-size:14px;margin-top:10px;min-height:1em}
+/* voto */
+.vote{display:flex;align-items:center;gap:14px;background:linear-gradient(120deg,var(--ink),#0E2A40);color:#fff;border-radius:14px;padding:16px;margin-top:16px;border-top:4px solid var(--red)}
+.vote .tx{flex:1}.vote b{display:block;font-size:17px}.vote small{color:#BFC5C9}
+.vote .btn{width:auto;margin:0;background:var(--red);white-space:nowrap}
+.vote svg{width:44px;height:44px;flex:none}
+/* tabs */
+.tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:12px 0 8px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:99px;padding:9px 15px;font-weight:700;font-size:14px;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.tabs button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tabs .bd{background:var(--red);color:#fff;border-radius:99px;font-size:11px;padding:1px 7px}
+/* overview */
+.ovh{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-top:6px}
+.ovh .t{font-size:22px;font-weight:800;color:var(--ink);line-height:1.15}
+.ovh .s{font-size:13px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+@media(min-width:720px){.kpis{grid-template-columns:repeat(5,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--ink);border-radius:10px;padding:11px}
+.kpi.ok{border-top-color:var(--ok)}.kpi.mid{border-top-color:var(--mid)}.kpi.bad{border-top-color:var(--red)}
+.kpi .n{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--gray)}
+.kpi .v{font-size:28px;font-weight:800;line-height:1.1;margin:2px 0;color:var(--ink)}
+.kpi.ok .v{color:var(--ok)}.kpi.mid .v{color:var(--mid)}.kpi.bad .v{color:var(--red)}
+.kpi .r{font-size:12px;color:var(--muted)}
+.vol{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.vol div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.vol b{display:block;font-size:20px;color:var(--ink)}.vol span{font-size:12px;color:var(--muted)}
+.grid2{display:grid;gap:12px}
+@media(min-width:760px){.grid2{grid-template-columns:1fr 1fr}}
+.bars .row{display:grid;grid-template-columns:120px 1fr 34px;gap:8px;align-items:center;margin:7px 0;font-size:14px}
+.bars .tr{height:12px;background:#EEF0F1;border-radius:6px;overflow:hidden}.bars .tr i{display:block;height:100%;background:var(--ink);border-radius:6px}
+.bars .row b{text-align:right;color:var(--ink)}
+.sem .row{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;margin:8px 0;font-size:13px}
+.sem .st{display:flex;height:16px;border-radius:5px;overflow:hidden;background:#EEF0F1}
+.sem .st i{display:block;height:100%}.sem .st .o{background:var(--ok)}.sem .st .m{background:#D9A440}.sem .st .b{background:var(--red)}
+.leg{display:flex;gap:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.prog{height:14px;background:#EEF0F1;border-radius:7px;overflow:hidden;margin:8px 0 4px}.prog i{display:block;height:100%;background:var(--red);border-radius:7px;transition:width .6s}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:400px}
+th{background:var(--ink);color:#fff;font-weight:700;padding:8px;text-align:right;white-space:nowrap;cursor:default}
+th:first-child,td:first-child{text-align:left}
+td{padding:8px;border-top:1px solid var(--line);text-align:right;white-space:nowrap}
+td:first-child{font-weight:600;color:var(--ink)}
+td.ok{color:var(--ok);font-weight:700}td.bad{color:var(--red);font-weight:700}td.mid{color:var(--mid)}
+tr.tot td{background:var(--red-soft);font-weight:700}
+tr.click{cursor:pointer}tr.click:hover td{background:#F7F9FA}
+th.sort{cursor:pointer}th.sort::after{content:" ↕";opacity:.5}
+.rank{list-style:none;margin:0;padding:0}
+.rank li{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.rank li:first-child{border-top:0}
+.rank .nm{font-weight:700;color:var(--ink)}.rank .sm{font-size:12px;color:var(--muted)}
+.rank .vv{font-weight:800}
+/* chips / filtros */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 14px;font-weight:700;font-size:14px;color:var(--ink);text-align:left}
+.chip small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}.chip[aria-pressed=true] small{color:#C9CED1}
+.filters{display:grid;grid-template-columns:1fr;gap:8px;margin-top:6px}
+@media(min-width:640px){.filters{grid-template-columns:2fr 1fr 1fr}}
+.filters input,.filters select{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid #CFCFCF;border-radius:10px;background:#fff;color:var(--ink)}
+/* lista de agencias */
+.alist{display:grid;gap:8px;margin-top:10px}
+@media(min-width:760px){.alist{grid-template-columns:1fr 1fr}}
+.arow{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;text-align:left;width:100%;color:inherit}
+.arow:hover{border-color:var(--ink)}
+.av{width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;background:var(--ink)}
+.arow .mn{flex:1;min-width:0}.arow .nm{font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.arow .sm{font-size:12px;color:var(--muted)}
+.arow .kv{text-align:right;font-size:12px;color:var(--muted)}.arow .kv b{display:block;font-size:17px}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+.tag.e{background:#EEF0F1;color:var(--gray)}.tag.p{background:var(--ok-soft);color:var(--ok)}.tag.n{background:var(--red-soft);color:var(--red)}
+/* feed */
+.feed{display:flex;flex-direction:column;gap:12px;margin-top:10px;max-width:640px}
+.post{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;animation:in .5s ease-out}
+.post.new{box-shadow:0 0 0 2px var(--red)}
+.post .hd{display:flex;gap:10px;align-items:center}
+.post .av{background:linear-gradient(135deg,var(--red),#7A0016);box-shadow:0 0 0 2px #fff,0 0 0 4px var(--red)}
+.post .who{flex:1;min-width:0}.post .who b{color:var(--ink);font-size:15px}.post .who small{display:block;color:var(--muted);font-size:12px}
+.post .time{font-size:12px;color:var(--muted);white-space:nowrap}
+.post .goal{margin:10px 0 6px;font-size:14px;color:var(--ink)}
+.post .goal span{display:inline-block;background:var(--ink);color:#fff;border-radius:99px;padding:3px 10px;font-weight:700;font-size:12px;margin-right:6px}
+.post ol{margin:6px 0 0;padding-left:20px}.post li{margin:5px 0;color:var(--gray)}.post li small{display:block;color:var(--muted);font-size:12px}
+.post .ap{margin-top:8px;font-size:13px;font-style:italic;color:var(--gray)}
+.post .ft{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.post .ft button{border:0;background:none;color:var(--red);font-weight:700;padding:0}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--red);letter-spacing:.08em;text-transform:uppercase}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:18px;text-align:center;color:var(--muted)}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pulse{50%{opacity:.25}}
+footer{text-align:center;font-size:12px;color:var(--muted);padding:24px 16px 36px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="brand"><img class="lk" src="logo-kia.png" alt="Kia" onerror="this.remove()"><img class="lcu" src="logo-cumbre.png" alt="Cumbre Nacional de Líderes BDC 2026" onerror="this.remove()"><img class="lc" src="logo-cdk.png" alt="CDK" onerror="this.remove()"></div>
+  <div class="eyebrow">Portal de directivos</div>
+  <h1>Red Kia · BDC</h1>
+  <div class="sub" id="hSub">Información confidencial</div>
+</div></header>
+
+<main class="wrap">
+  <section id="vNoLink" class="gate" hidden>
+    <div class="card"><h2>Escanea tu QR</h2><p>Para entrar al portal escanea el código QR de tu tarjeta de directivo de la Cumbre Nacional de Líderes BDC 2026.</p></div>
+  </section>
+
+  <section id="vPin" class="gate" hidden>
+    <form class="card" id="pinForm" novalidate>
+      <h2>Código de acceso</h2>
+      <p style="margin:0 0 12px">Escribe el código de 4 dígitos impreso en tu tarjeta, junto al QR.</p>
+      <input class="pin" id="pin" inputmode="numeric" maxlength="4" autocomplete="one-time-code" aria-label="Código de 4 dígitos">
+      <button class="btn" id="pinBtn" type="submit">Entrar</button>
+      <div class="err" id="pinErr" role="alert"></div>
+    </form>
+  </section>
+
+  <section id="vMain" hidden>
+    <div class="vote" id="voteCard" hidden>
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 6h20v8c0 7-4 12-10 13-6-1-10-6-10-13z" fill="#E3B649"/><path d="M14 9H8c0 7 3 11 8 12M34 9h6c0 7-3 11-8 12" fill="none" stroke="#E3B649" stroke-width="3" stroke-linecap="round"/><rect x="21" y="27" width="6" height="7" fill="#E3B649"/><rect x="15" y="34" width="18" height="6" rx="2" fill="#E3B649"/></svg>
+      <div class="tx"><b>Concurso de Mejores Prácticas</b><small>Tu voto como jurado directivo vale 70% del resultado.</small></div>
+      <a class="btn" id="voteBtn" href="#">Votar</a>
+    </div>
+
+    <nav class="tabs" role="tablist" id="tabs">
+      <button role="tab" data-v="red" aria-selected="true">Red Kia</button>
+      <button role="tab" data-v="reg" aria-selected="false">Gerentes regionales</button>
+      <button role="tab" data-v="ag" aria-selected="false">Agencias</button>
+      <button role="tab" data-v="feed" aria-selected="false"><span class="live" style="color:inherit"><i></i></span>Planes en vivo <span class="bd" id="feedN" hidden>0</span></button>
+    </nav>
+
+    <div id="pRed" class="pane"></div>
+    <div id="pReg" class="pane" hidden>
+      <div class="chips" id="rmChips"></div>
+      <div id="regBody"></div>
+    </div>
+    <div id="pAg" class="pane" hidden>
+      <div class="filters">
+        <input id="q" placeholder="Buscar agencia, grupo o DSM" aria-label="Buscar agencia">
+        <select id="fRm" aria-label="Gerente regional"><option value="">Todas las regiones</option></select>
+        <select id="fEt" aria-label="Etapa a mover"><option value="">Todas las etapas</option><option value="agend">Agendamiento</option><option value="cump">Cumplimiento</option><option value="cierre">Cierre</option><option value="sin">Sin datos</option></select>
+      </div>
+      <div class="note" id="agN"></div>
+      <div class="alist" id="agList"></div>
+    </div>
+    <div id="pFeed" class="pane" hidden>
+      <div class="ovh"><div><div class="t">Planes de acción en vivo</div><div class="s">Aparecen aquí conforme cada agencia envía su plan. Se actualiza solo.</div></div><span class="live"><i></i>En vivo</span></div>
+      <div class="chips" id="feedChips"></div>
+      <div class="feed" id="feed"></div>
+    </div>
+  </section>
+</main>
+<footer>Elaborado por CDK Global · Cumbre Nacional de Líderes BDC 2026 · 18 y 19 de noviembre<br><span id="fuente">Fuente: CDK SYSTEM</span></footer>
+
+<script>
+const VOTE_URL = 'https://dlrservicesanalytics.github.io/cumbre-bdc-votacion/';
+const FS = 'https://firestore.googleapis.com/v1/projects/cumbre-bdc-2026/databases/(default)/documents/planes?pageSize=300&key=AIzaSyDo1zR-yVPACdAKPXL742h9C0JDQf4b9Sg';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pc = v => (Math.round(v * 10) / 10).toFixed(1) + '%';
+const num = v => Math.round(v).toLocaleString('es-MX');
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const ss = { get(k){ try { return sessionStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { sessionStorage.setItem(k,v); } catch(e){} } };
+async function sha256hex(t){ const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2,'0')).join(''); }
+const show = v => ['vNoLink','vPin','vMain'].forEach(x => $(x).hidden = x !== v);
+const KN = { agend:'Agendamiento', conf:'Confirmación', cump:'Cumplimiento', cierre:'Cierre', neta:'Tasa neta' };
+const ET = { agend:'Agendamiento', cump:'Cumplimiento', cierre:'Cierre' };
+const ini = s => String(s).replace(/^Kia\s+/i, '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+let B = null, ME = null, TOKEN = '', WRAP = null, PLANS = {}, seen = null, lastSig = '';
+
+/* ===== Acceso ===== */
+(async function init(){
+  const cached = ss.get('cdkDirBundle'), me = ss.get('cdkDirMe');
+  await 0;
+  if (cached && me){ try { B = JSON.parse(cached); ME = JSON.parse(me); return start(); } catch(e){} }
+  TOKEN = new URLSearchParams(location.hash.slice(1)).get('t') || '';
+  if (!TOKEN || !window.crypto || !crypto.subtle){ show('vNoLink'); return; }
+  try {
+    const r = await fetch('d/red.json', { cache:'no-store' }); if (!r.ok) throw 0;
+    const R = await r.json(); const id = (await sha256hex('dir:' + TOKEN)).slice(0, 24);
+    if (!R.w[id]) throw 0; WRAP = { R, w: R.w[id] };
+  } catch(e){ show('vNoLink'); document.querySelector('#vNoLink p').textContent = 'Este enlace no es válido. Escanea nuevamente el QR de tu tarjeta.'; return; }
+  show('vPin'); $('pin').focus();
+})();
+$('pin').addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4));
+$('pinForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const pin = $('pin').value; $('pinErr').textContent = '';
+  if (!/^\d{4}$/.test(pin)){ $('pinErr').textContent = 'Escribe los 4 dígitos.'; return; }
+  $('pinBtn').disabled = true; $('pinBtn').textContent = 'Abriendo…';
+  try {
+    const w = WRAP.w;
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(TOKEN + ':' + pin), 'PBKDF2', false, ['deriveKey']);
+    const wk = await crypto.subtle.deriveKey({ name:'PBKDF2', salt:b64(w.s), iterations:w.it, hash:'SHA-256' }, base, { name:'AES-GCM', length:256 }, false, ['decrypt']);
+    const pl = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name:'AES-GCM', iv:b64(w.i) }, wk, b64(w.c))));
+    const k = await crypto.subtle.importKey('raw', b64(pl.k), 'AES-GCM', false, ['decrypt']);
+    const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv:b64(WRAP.R.b.i) }, k, b64(WRAP.R.b.c));
+    B = JSON.parse(new TextDecoder().decode(pt)); ME = { n: pl.n, t: pl.t, code: pin };
+    ss.set('cdkDirBundle', JSON.stringify(B)); ss.set('cdkDirMe', JSON.stringify(ME));
+    history.replaceState(null, '', location.pathname);
+    start();
+  } catch(err){ $('pinErr').textContent = 'Código incorrecto. Revisa el que viene impreso en tu tarjeta.'; }
+  finally { $('pinBtn').disabled = false; $('pinBtn').textContent = 'Entrar'; }
+});
+
+/* ===== Cálculos ===== */
+const hasD = a => !a.D.soloPlan;
+function agg(L){
+  const A = L.filter(hasD); let cont = 0, cit = 0, conf = 0, as = 0, vc = 0, n = A.length;
+  A.forEach(a => { const T = a.D.totales, k = a.D.kpi; cont += T.cont; cit += T.cit; conf += T.cit * k.conf.v / 100; const s = T.cit * k.cump.v / 100; as += s; vc += s * k.cierre.v / 100; });
+  return { n, cont, cit, vc, k:{ agend: cont ? cit / cont * 100 : 0, conf: cit ? conf / cit * 100 : 0, cump: cit ? as / cit * 100 : 0, cierre: as ? vc / as * 100 : 0, neta: cont ? vc / cont * 100 : 0 } };
+}
+function aggF(L){
+  const M = {};
+  L.filter(hasD).forEach(a => a.D.fuentes.forEach(f => { const m = M[f.f] || (M[f.f] = { cont:0, cit:0, as:0, vc:0 }); const s = f.cit * f.cump / 100; m.cont += f.cont; m.cit += f.cit; m.as += s; m.vc += s * f.cierre / 100; }));
+  return Object.entries(M).map(([f, m]) => ({ f, ...m, agend: m.cont ? m.cit / m.cont * 100 : 0, cump: m.cit ? m.as / m.cit * 100 : 0, cierre: m.as ? m.vc / m.as * 100 : 0, neta: m.cont ? m.vc / m.cont * 100 : 0 })).sort((a, b) => b.cont - a.cont);
+}
+const cls = (v, k) => { const r = B.red[k].v; return v >= r + 0.5 ? 'ok' : v <= r - 0.5 ? 'bad' : 'mid'; };
+const sent = a => !!PLANS[a.fid];
+
+/* ===== Vistas ===== */
+function start(){
+  show('vMain');
+  $('hSub').textContent = `${ME.n} · ${B.periodo}`;
+  $('fuente').textContent = 'Fuente: ' + B.fuente;
+  if (ME.t === 'dir'){ $('voteCard').hidden = false; $('voteBtn').href = VOTE_URL + '#c=' + ME.code; }
+  $('fRm').insertAdjacentHTML('beforeend', B.regiones.map(r => `<option value="${esc(r.rm)}">${esc(r.rm)} · ${esc(r.region)}</option>`).join(''));
+  const v = new URLSearchParams(location.hash.slice(1)).get('v');
+  go(['red','reg','ag','feed'].includes(v) ? v : 'red');
+  renderAll(); loadPlans(); setInterval(loadPlans, 15000);
+}
+let view = 'red';
+function go(v){
+  view = v;
+  document.querySelectorAll('#tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.v === v));
+  $('pRed').hidden = v !== 'red'; $('pReg').hidden = v !== 'reg'; $('pAg').hidden = v !== 'ag'; $('pFeed').hidden = v !== 'feed';
+  history.replaceState(null, '', location.pathname + '#v=' + v);
+  if (v === 'feed'){ seen = Object.keys(PLANS); $('feedN').hidden = true; }
+}
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => { go(b.dataset.v); window.scrollTo({ top: $('tabs').offsetTop - 4 }); });
+function renderAll(){ renderRed(); renderReg(); renderAg(); renderFeed(); }
+
+function overview(L, title, subtitle, official){
+  const G = agg(L), K = official ? Object.fromEntries(Object.keys(KN).map(k => [k, B.red[k].v])) : G.k;
+  const nS = L.filter(sent).length;
+  const et = { agend:0, cump:0, cierre:0 }; L.filter(hasD).forEach(a => et[a.D.etapa]++);
+  const mx = Math.max(1, ...Object.values(et));
+  const sem = Object.keys(KN).map(k => { const c = { ok:0, mid:0, bad:0 }; L.filter(hasD).forEach(a => c[a.D.kpi[k].estado]++); return [k, c]; });
+  const top = L.filter(hasD).sort((a, b) => b.D.kpi.neta.v - a.D.kpi.neta.v);
+  const F = aggF(L);
+  const li = a => `<li data-f="${a.fid}"><div><div class="nm">${esc(a.ag)}</div><div class="sm">${esc(a.region)} · ${esc(a.dsm)}</div></div><div class="vv ${cls(a.D.kpi.neta.v,'neta')}" style="color:var(--${cls(a.D.kpi.neta.v,'neta') === 'ok' ? 'ok' : cls(a.D.kpi.neta.v,'neta') === 'bad' ? 'red' : 'mid'})">${pc(a.D.kpi.neta.v)}</div></li>`;
+  return `<div class="ovh"><div><div class="t">${esc(title)}</div><div class="s">${esc(subtitle)}</div></div></div>
+  <div class="kpis">${Object.keys(KN).map(k => `<div class="kpi ${official ? '' : cls(K[k], k)}"><div class="n">${KN[k]}</div><div class="v">${pc(K[k])}</div><div class="r">${official ? 'Mejores agencias ' + pc(B.red[k].top) : 'Red ' + pc(B.red[k].v) + ' · Mejores ' + pc(B.red[k].top)}</div></div>`).join('')}</div>
+  <h2>Planes de acción</h2>
+  <div class="card"><div style="display:flex;justify-content:space-between;font-weight:700;color:var(--ink)"><span>${nS} de ${L.length} agencias ya enviaron su plan</span><span>${L.length ? Math.round(nS / L.length * 100) : 0}%</span></div><div class="prog"><i style="width:${L.length ? nS / L.length * 100 : 0}%"></i></div><div class="note">Fecha límite: jueves 19 de noviembre, 2:00 p.m.</div></div>
+  <div class="grid2">
+    <div><h2>Etapa a mover</h2><div class="card bars">${Object.keys(et).map(k => `<div class="row"><span>${ET[k]}</span><div class="tr"><i style="width:${et[k] / mx * 100}%"></i></div><b>${et[k]}</b></div>`).join('')}<div class="note">Agencias según la etapa que su ficha marca como prioridad.</div></div></div>
+    <div><h2>Semáforo por indicador</h2><div class="card sem">${sem.map(([k, c]) => { const t = c.ok + c.mid + c.bad || 1; return `<div class="row"><span>${KN[k]}</span><div class="st" title="${c.ok} fortaleza · ${c.mid} en la media · ${c.bad} brecha"><i class="o" style="width:${c.ok / t * 100}%"></i><i class="m" style="width:${c.mid / t * 100}%"></i><i class="b" style="width:${c.bad / t * 100}%"></i></div></div>`; }).join('')}<div class="leg"><span><i style="background:var(--ok)"></i>Fortaleza</span><span><i style="background:#D9A440"></i>En la media</span><span><i style="background:var(--red)"></i>Brecha</span></div></div></div>
+  </div>
+  <h2>Embudo por fuente</h2>
+  <div class="tbl"><table><thead><tr><th>Fuente</th><th>Agend.</th><th>Cumpl.</th><th>Cierre</th><th>Neta</th></tr></thead><tbody>${F.map(f => `<tr><td>${esc(f.f)}</td><td>${pc(f.agend)}</td><td>${pc(f.cump)}</td><td>${pc(f.cierre)}</td><td>${pc(f.neta)}</td></tr>`).join('')}<tr class="tot"><td>Total</td><td>${pc(G.k.agend)}</td><td>${pc(G.k.cump)}</td><td>${pc(G.k.cierre)}</td><td>${pc(G.k.neta)}</td></tr></tbody></table></div>
+  <div class="grid2">
+    <div><h2>Mejor tasa neta</h2><div class="card"><ul class="rank">${top.slice(0, 5).map(li).join('')}</ul></div></div>
+    <div><h2>Mayor oportunidad</h2><div class="card"><ul class="rank">${top.slice(-5).reverse().map(li).join('')}</ul></div></div>
+  </div>`;
+}
+function renderRed(){
+  const L = B.ag;
+  $('pRed').innerHTML = overview(L, 'Ficha general de la red', `${L.length} agencias · ${B.periodo} · ${L.filter(a => !hasD(a)).length} sin datos suficientes`, true) +
+    `<h2>Por gerente regional</h2>` + regTable(B.regiones.map(r => ({ lbl: r.rm, sub: r.region, L: B.ag.filter(a => a.rm === r.rm), key: r.rm })), 'rm');
+  bindRank($('pRed'));
+}
+function regTable(rows, kind){
+  return `<div class="tbl"><table><thead><tr><th>${kind === 'rm' ? 'Gerente regional' : 'Gerente de distrito (DSM)'}</th><th>Agencias</th><th>Agend.</th><th>Cumpl.</th><th>Cierre</th><th>Neta</th><th>Planes</th></tr></thead><tbody>${rows.map(r => { const G = agg(r.L); return `<tr class="click" data-${kind}="${esc(r.key)}"><td>${esc(r.lbl)}<div style="font-weight:400;font-size:12px;color:var(--muted)">${esc(r.sub)}</div></td><td>${r.L.length}</td>${['agend','cump','cierre','neta'].map(k => `<td class="${cls(G.k[k], k)}">${pc(G.k[k])}</td>`).join('')}<td>${r.L.filter(sent).length}/${r.L.length}</td></tr>`; }).join('')}</tbody></table></div><div class="note">Color contra el promedio de la red: verde arriba, rojo abajo.</div>`;
+}
+let RM = null, DSM = null;
+function renderReg(){
+  if (!RM) RM = B.regiones[0].rm;
+  $('rmChips').innerHTML = B.regiones.map(r => `<button class="chip" aria-pressed="${r.rm === RM}" data-rm="${esc(r.rm)}">${esc(r.rm)}<small>${esc(r.region)} · ${r.n} agencias</small></button>`).join('');
+  $('rmChips').querySelectorAll('button').forEach(b => b.onclick = () => { RM = b.dataset.rm; DSM = null; renderReg(); });
+  const R = B.regiones.find(r => r.rm === RM), L = B.ag.filter(a => a.rm === RM && (!DSM || a.dsm === DSM));
+  $('regBody').innerHTML = `<div class="chips" style="margin-top:12px">${['', ...R.dsms].map(d => `<button class="chip" style="padding:6px 12px;font-size:13px" aria-pressed="${(DSM || '') === d}" data-d="${esc(d)}">${d ? esc(d) : 'Todos los DSM'}</button>`).join('')}</div>` +
+    overview(L, DSM ? DSM : `${R.rm} · ${R.region}`, `${L.length} agencias${DSM ? ' · ' + R.rm : ' · ' + R.dsms.length + ' gerentes de distrito'}`, false) +
+    (DSM ? '' : `<h2>Por gerente de distrito</h2>` + regTable(R.dsms.map(d => ({ lbl: d, sub: '', L: B.ag.filter(a => a.rm === RM && a.dsm === d), key: d })), 'dsm')) +
+    `<h2>Agencias</h2><div class="alist">${L.map(arow).join('')}</div>`;
+  $('regBody').querySelectorAll('[data-d]').forEach(b => b.onclick = () => { DSM = b.dataset.d || null; renderReg(); });
+  $('regBody').querySelectorAll('tr[data-dsm]').forEach(t => t.onclick = () => { DSM = t.dataset.dsm; renderReg(); window.scrollTo({ top: $('tabs').offsetTop - 4 }); });
+  bindRank($('regBody'));
+}
+function arow(a){
+  const k = a.D.kpi, c = hasD(a) ? cls(k.neta.v, 'neta') : '';
+  return `<button class="arow" data-f="${a.fid}"><span class="av">${esc(ini(a.ag))}</span><span class="mn"><span class="nm">${esc(a.ag)}</span><span class="sm" style="display:block">${esc(a.dsm)} · ${esc(a.edo)}${a.grupo ? ' · ' + esc(a.grupo) : ''}</span><span style="display:block;margin-top:3px">${hasD(a) ? `<span class="tag e">Etapa: ${ET[a.D.etapa]}</span>` : '<span class="tag e">Sin datos</span>'}${sent(a) ? '<span class="tag p">Plan enviado</span>' : '<span class="tag n">Sin plan</span>'}</span></span>${hasD(a) ? `<span class="kv">Neta<b style="color:var(--${c === 'ok' ? 'ok' : c === 'bad' ? 'red' : 'mid'})">${pc(k.neta.v)}</b></span>` : ''}</button>`;
+}
+function renderAg(){
+  const q = $('q').value.trim().toLowerCase(), rm = $('fRm').value, et = $('fEt').value;
+  const L = B.ag.filter(a => (!rm || a.rm === rm) && (!et || (et === 'sin' ? !hasD(a) : hasD(a) && a.D.etapa === et)) && (!q || (a.ag + ' ' + a.grupo + ' ' + a.dsm + ' ' + a.edo + ' ' + a.rm).toLowerCase().includes(q)));
+  $('agN').textContent = `${L.length} de ${B.ag.length} agencias · toca una para ver su ficha y su plan`;
+  $('agList').innerHTML = L.map(arow).join('') || '<div class="empty">Ninguna agencia coincide con la búsqueda.</div>';
+  bindRank($('agList'));
+}
+['q','fRm','fEt'].forEach(id => $(id).addEventListener('input', renderAg));
+function bindRank(el){ el.querySelectorAll('[data-f]').forEach(x => x.onclick = () => openAg(x.dataset.f)); el.querySelectorAll('tr[data-rm]').forEach(t => t.onclick = () => { RM = t.dataset.rm; DSM = null; renderReg(); go('reg'); window.scrollTo({ top: $('tabs').offsetTop - 4 }); }); }
+function openAg(fid){ location.href = 'index.html#dir=' + encodeURIComponent(fid) + '&v=' + view; }
+
+/* ===== Planes en vivo ===== */
+function fv(v){
+  if (!v) return '';
+  if ('stringValue' in v) return v.stringValue; if ('integerValue' in v) return Number(v.integerValue); if ('doubleValue' in v) return v.doubleValue;
+  if ('timestampValue' in v) return v.timestampValue; if ('nullValue' in v) return '';
+  if ('arrayValue' in v) return (v.arrayValue.values || []).map(fv);
+  if ('mapValue' in v) return Object.fromEntries(Object.entries(v.mapValue.fields || {}).map(([k, x]) => [k, fv(x)]));
+  return '';
+}
+async function loadPlans(){
+  try {
+    const r = await fetch(FS, { cache:'no-store' }); if (!r.ok) throw 0;
+    const j = await r.json(); const P = {};
+    (j.documents || []).forEach(d => { const id = d.name.split('/').pop(); P[id] = Object.fromEntries(Object.entries(d.fields || {}).map(([k, x]) => [k, fv(x)])); });
+    const sig = JSON.stringify(Object.keys(P).sort().map(k => [k, P[k].ts]));
+    if (sig === lastSig) return; lastSig = sig;
+    const newIds = seen ? Object.keys(P).filter(id => !seen.includes(id)) : [];
+    PLANS = P;
+    if (view === 'feed') seen = Object.keys(P);
+    else if (newIds.length){ $('feedN').hidden = false; $('feedN').textContent = newIds.length; }
+    renderAll(); renderFeed(newIds);
+  } catch(e){ if (!Object.keys(PLANS).length) renderFeed(); }
+}
+const ago = t => { const s = (Date.now() - new Date(t).getTime()) / 1000; if (!(s >= 0)) return ''; if (s < 60) return 'hace un momento'; if (s < 3600) return `hace ${Math.floor(s / 60)} min`; if (s < 86400) return `hace ${Math.floor(s / 3600)} h`; return new Date(t).toLocaleDateString('es-MX', { day:'numeric', month:'short' }); };
+let FRM = '';
+function renderFeed(newIds){
+  const byF = Object.fromEntries(B.ag.map(a => [a.fid, a]));
+  $('feedChips').innerHTML = ['', ...B.regiones.map(r => r.rm)].map(rm => `<button class="chip" style="padding:6px 12px;font-size:13px" aria-pressed="${FRM === rm}" data-rm="${esc(rm)}">${rm ? esc(rm) : 'Todas'}</button>`).join('');
+  $('feedChips').querySelectorAll('button').forEach(b => b.onclick = () => { FRM = b.dataset.rm; renderFeed(); });
+  const items = Object.entries(PLANS).map(([id, p]) => ({ id, p, a: byF[id] })).filter(x => x.a && (!FRM || x.a.rm === FRM)).sort((x, y) => String(y.p.ts).localeCompare(String(x.p.ts)));
+  $('feed').innerHTML = items.length ? items.map(({ id, p, a }) => `<article class="post${newIds && newIds.includes(id) ? ' new' : ''}">
+    <div class="hd"><span class="av">${esc(ini(a.ag))}</span><div class="who"><b>${esc(a.ag)}</b><small>${esc(a.rm)} · ${esc(a.dsm)}${p.nombre ? ' · ' + esc(p.nombre) : ''}</small></div><span class="time">${esc(ago(p.ts))}</span></div>
+    <div class="goal"><span>${esc(p.etapa || 'Plan')}</span>${p.hoy !== '' && p.hoy != null ? 'hoy ' + esc(p.hoy) + '% → ' : ''}meta ${esc(p.meta || '—')}%</div>
+    <ol>${(p.acciones || []).filter(x => x && x.accion).map(x => `<li>${esc(x.accion)}<small>${esc(x.responsable || '')}${x.fecha ? ' · ' + esc(x.fecha.split('-').reverse().join('/')) : ''}</small></li>`).join('')}</ol>
+    ${p.apoyo ? `<div class="ap">Apoyo que necesitan: ${esc(p.apoyo)}</div>` : ''}
+    <div class="ft"><span>${hasD(a) ? 'Tasa neta ' + pc(a.D.kpi.neta.v) : 'Sin datos'}</span><button data-f="${a.fid}">Ver ficha →</button></div></article>`).join('')
+    : `<div class="empty">${Object.keys(PLANS).length ? 'Aún no hay planes de esta región.' : 'Todavía no llega ningún plan. Aparecerán aquí en cuanto las agencias los envíen.'}</div>`;
+  bindRank($('feed'));
+}
+</script>
+</body>
+</html>
