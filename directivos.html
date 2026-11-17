@@ -191,7 +191,8 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:24px 16px 36p
 <script>
 const VOTE_URL = 'https://dlrservicesanalytics.github.io/cumbre-bdc-votacion/';
 // Tarjetas de jurado asignadas a personas de agencia: abren la ficha de su agencia y votan como Líder BDC (30%).
-const AGMAP = {"2dc2651f0d21c0588690fe13": {"fid": "893f13e436b5be85c3f50dac", "ag": "Kia Sendero"}, "64cf41c9d41f5c01121ed255": {"fid": "0e43b0d6123b7ebcfd16f561", "ag": "Kia Del Valle"}, "fe61810398ebf90c4776c1d4": {"fid": "37518b4da057389274ffc48d", "ag": "Kia Linda Vista"}, "d05d7134706d68250b1d52ba": {"fid": "3f7ad7009ccbea6964753051", "ag": "Kia Peninsula"}, "38f8901564b0ff410bc6faff": {"fid": "67d21a4d5fa507462cff1bcc", "ag": "Kia Campestre"}, "23d7d9d918d6bedae493710b": {"fid": "fcd1f739bc757a3c61422847", "ag": "Kia Via Alta"}};
+// Si la agencia no tiene ficha (fid null), la tarjeta lleva directo a la votación.
+const AGMAP = {"2dc2651f0d21c0588690fe13": {"fid": "893f13e436b5be85c3f50dac", "ag": "Kia Sendero"}, "64cf41c9d41f5c01121ed255": {"fid": "0e43b0d6123b7ebcfd16f561", "ag": "Kia Del Valle"}, "fe61810398ebf90c4776c1d4": {"fid": "37518b4da057389274ffc48d", "ag": "Kia Linda Vista"}, "d05d7134706d68250b1d52ba": {"fid": "3f7ad7009ccbea6964753051", "ag": "Kia Peninsula"}, "38f8901564b0ff410bc6faff": {"fid": "67d21a4d5fa507462cff1bcc", "ag": "Kia Campestre"}, "23d7d9d918d6bedae493710b": {"fid": "fcd1f739bc757a3c61422847", "ag": "Kia Via Alta"}, "6a70c995ae053a54e753a9f2": {"fid": null, "ag": "Kia Guadalupe"}};
 const CFG_URL = 'https://firestore.googleapis.com/v1/projects/cumbre-bdc-2026/databases/(default)/documents/config/votacion?key=AIzaSyDo1zR-yVPACdAKPXL742h9C0JDQf4b9Sg';
 let DIRID = '';
 const FS = 'https://firestore.googleapis.com/v1/projects/cumbre-bdc-2026/databases/(default)/documents/planes?pageSize=300&key=AIzaSyDo1zR-yVPACdAKPXL742h9C0JDQf4b9Sg';
@@ -263,6 +264,7 @@ const sent = a => !!PLANS[a.fid];
 /* ===== Vistas ===== */
 function start(){
   if (ME.t === 'ag' && ME.fid){ location.replace('index.html#dir=' + encodeURIComponent(ME.fid) + '&ag=1'); return; }
+  if (ME.t === 'ag'){ location.replace(VOTE_URL + '#c=' + encodeURIComponent(ME.code)); return; }
   show('vMain');
   $('hSub').textContent = `${ME.n} · ${B.periodo}`;
   $('fuente').textContent = 'Fuente: ' + B.fuente;
