@@ -96,6 +96,16 @@ button{font:inherit;font-weight:700;font-size:17px;border:0;border-radius:10px;p
 .saved{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
 /* pin */
 .gate{max-width:420px;margin:40px auto 0;text-align:center}
+.lock{border-top:4px solid var(--red);padding:26px 20px 22px}
+.lock .lk-ic{width:52px;height:52px;fill:var(--ink);stroke:var(--ink);stroke-width:3.5;margin-bottom:8px}
+.lock .lk-ic circle{fill:#fff;stroke:none}
+.lock .lk-eye{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--red)}
+.lock h2{margin:6px 0 4px;font-size:22px;line-height:1.2;color:var(--ink);border:0;padding:0;text-transform:none;letter-spacing:0}
+.lock h2::after{display:none}
+.lock .lk-conf{font-size:17px;font-weight:700;color:var(--ink);margin:0 0 12px}
+.lock .lk-st{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 0}
+.lock .lk-st i{width:8px;height:8px;border-radius:50%;background:var(--red);animation:lkp 1.4s infinite}
+@keyframes lkp{50%{opacity:.25}}
 .gate .card{padding:22px}
 .pin{font-size:30px;letter-spacing:.5em;text-align:center;max-width:220px;margin:12px auto 0;display:block;padding-left:.5em}
 .done{text-align:center}
@@ -163,6 +173,18 @@ body.has-cd{padding-bottom:84px}
   <!-- Sin enlace -->
   <section id="vNoLink" class="gate" hidden>
     <div class="card"><h2 style="margin-top:0">Escanea tu QR</h2><p>Para abrir tu ficha escanea el código QR de la tarjeta que recibiste en la Cumbre Nacional de Líderes BDC 2026.</p></div>
+  </section>
+
+  <!-- Bloqueo durante la conferencia -->
+  <section id="vLock" class="gate" hidden>
+    <div class="card lock">
+      <svg class="lk-ic" viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="21" width="30" height="21" rx="4"/><path d="M15 21v-6a9 9 0 0 1 18 0v6" fill="none"/><circle cx="24" cy="31" r="3"/></svg>
+      <div class="lk-eye">Tu ficha está en pausa</div>
+      <h2>Se abrirá al terminar la conferencia</h2>
+      <p class="lk-conf">“BDC como motor estratégico de ventas”</p>
+      <p>Te invitamos a poner toda tu atención en la conferencia. Al terminar, esta pantalla se abrirá sola para que revises tu ficha y armes tu plan de acción.</p>
+      <p class="lk-st"><i></i>Esperando apertura</p>
+    </div>
   </section>
 
   <!-- PIN -->
@@ -272,7 +294,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 const pc = v => (Math.round(v * 10) / 10).toFixed(1) + '%';
-const show = v => ['vNoLink','vPin','vFicha','vDone'].forEach(x => $(x).hidden = x !== v);
+const show = v => ['vNoLink','vLock','vPin','vFicha','vDone'].forEach(x => $(x).hidden = x !== v);
 const store = {
   get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
   set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
@@ -301,7 +323,7 @@ async function decrypt(pin){
     const a = Bd && Bd.ag.find(x => x.fid === h.get('dir'));
     if (!a){ location.replace('directivos.html'); return; }
     let me = null; try { me = JSON.parse(sessionStorage.getItem('cdkDirMe') || 'null'); } catch(e){}
-    DIR = { a, back: 'directivos.html#v=' + (h.get('v') || 'ag'), ag: h.get('ag') === '1' && me && me.t === 'ag', code: me && me.code, nm: me && me.nm }; FID = a.fid; D = a.D; await 0; return open();
+    DIR = { a, back: 'directivos.html#v=' + (h.get('v') || 'ag'), ag: h.get('ag') === '1' && me && me.t === 'ag', code: me && me.code, nm: me && me.nm }; FID = a.fid; D = a.D; if (DIR.ag) await waitUnlock(); await 0; return open();
   }
   TOKEN = h.get('t') || '';
   if (!TOKEN || !window.crypto || !crypto.subtle) { show('vNoLink'); return; }
@@ -312,10 +334,29 @@ async function decrypt(pin){
     ENC = (await r.json())[FID];
     if (!ENC) throw 0;
   } catch(e){ show('vNoLink'); $('vNoLink').querySelector('p').textContent = 'Este enlace no es válido. Escanea nuevamente el QR de tu tarjeta.'; return; }
+  await waitUnlock();
   const remembered = store.sget('pin:' + FID);
   if (remembered) { try { D = await decrypt(remembered); return open(); } catch(e){} }
   show('vPin'); $('pin').focus();
 })();
+
+/* Bloqueo de fichas: se abren desde el tablero de votación (Control → Abrir fichas). */
+async function fichasAbiertas(){
+  const r = await fetch('https://firestore.googleapis.com/v1/projects/cumbre-bdc-2026/databases/(default)/documents/config/votacion?key=' + FS_KEY + '&t=' + Date.now(), { cache:'no-store' });
+  if (r.status === 404) return false;
+  if (!r.ok) throw new Error('cfg');
+  const f = (await r.json()).fields || {};
+  return !!(f.fichas && f.fichas.booleanValue);
+}
+async function waitUnlock(){
+  let fallos = 0;
+  for (;;){
+    try { if (await fichasAbiertas()) return; fallos = 0; }
+    catch(e){ if (++fallos >= 4) return; }
+    if ($('vLock').hidden) show('vLock');
+    await new Promise(r => setTimeout(r, 8000));
+  }
+}
 
 $('pinForm').addEventListener('submit', async e => {
   e.preventDefault();
