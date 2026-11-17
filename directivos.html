@@ -38,6 +38,7 @@ h2::after{content:"";position:absolute;left:0;bottom:-1px;width:32px;height:2px;
 .vote .tx{flex:1}.vote b{display:block;font-size:17px}.vote small{color:#BFC5C9}
 .vote .btn{width:auto;margin:0;background:var(--red);white-space:nowrap}
 .vote svg{width:44px;height:44px;flex:none}
+.vote{flex-wrap:wrap}.vote .acts{display:flex;gap:8px;flex:1 1 100%}.vote .acts .btn{flex:1;text-align:center}@media(min-width:620px){.vote .acts{flex:0 0 auto}}
 /* tabs */
 .tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:12px 0 8px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
@@ -154,7 +155,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:24px 16px 36p
     <div class="vote" id="voteCard" hidden>
       <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 6h20v8c0 7-4 12-10 13-6-1-10-6-10-13z" fill="#E3B649"/><path d="M14 9H8c0 7 3 11 8 12M34 9h6c0 7-3 11-8 12" fill="none" stroke="#E3B649" stroke-width="3" stroke-linecap="round"/><rect x="21" y="27" width="6" height="7" fill="#E3B649"/><rect x="15" y="34" width="18" height="6" rx="2" fill="#E3B649"/></svg>
       <div class="tx"><b>Concurso de Mejores Prácticas</b><small>Tu voto como jurado directivo vale 70% del resultado.</small></div>
-      <a class="btn" id="voteBtn" href="#">Votar</a>
+      <div class="acts"><a class="btn" id="voteBtn" href="#">Votar</a><a class="btn" id="revBtn" href="#" hidden style="background:#fff;color:var(--ink);border:1px solid #CFCFCF">Revisar proyectos</a></div>
     </div>
 
     <nav class="tabs" role="tablist" id="tabs">
@@ -189,6 +190,10 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:24px 16px 36p
 
 <script>
 const VOTE_URL = 'https://dlrservicesanalytics.github.io/cumbre-bdc-votacion/';
+// Tarjetas de jurado asignadas a personas de agencia: abren la ficha de su agencia y votan como Líder BDC (30%).
+const AGMAP = {"2dc2651f0d21c0588690fe13": {"fid": "893f13e436b5be85c3f50dac", "ag": "Kia Sendero"}, "64cf41c9d41f5c01121ed255": {"fid": "0e43b0d6123b7ebcfd16f561", "ag": "Kia Del Valle"}, "fe61810398ebf90c4776c1d4": {"fid": "37518b4da057389274ffc48d", "ag": "Kia Linda Vista"}, "d05d7134706d68250b1d52ba": {"fid": "3f7ad7009ccbea6964753051", "ag": "Kia Peninsula"}, "38f8901564b0ff410bc6faff": {"fid": "67d21a4d5fa507462cff1bcc", "ag": "Kia Campestre"}, "23d7d9d918d6bedae493710b": {"fid": "fcd1f739bc757a3c61422847", "ag": "Kia Via Alta"}};
+const CFG_URL = 'https://firestore.googleapis.com/v1/projects/cumbre-bdc-2026/databases/(default)/documents/config/votacion?key=AIzaSyDo1zR-yVPACdAKPXL742h9C0JDQf4b9Sg';
+let DIRID = '';
 const FS = 'https://firestore.googleapis.com/v1/projects/cumbre-bdc-2026/databases/(default)/documents/planes?pageSize=300&key=AIzaSyDo1zR-yVPACdAKPXL742h9C0JDQf4b9Sg';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -213,7 +218,7 @@ let B = null, ME = null, TOKEN = '', WRAP = null, PLANS = {}, seen = null, lastS
   if (!TOKEN || !window.crypto || !crypto.subtle){ show('vNoLink'); return; }
   try {
     const r = await fetch('d/red.json', { cache:'no-store' }); if (!r.ok) throw 0;
-    const R = await r.json(); const id = (await sha256hex('dir:' + TOKEN)).slice(0, 24);
+    const R = await r.json(); const id = (await sha256hex('dir:' + TOKEN)).slice(0, 24); DIRID = id;
     if (!R.w[id]) throw 0; WRAP = { R, w: R.w[id] };
   } catch(e){ show('vNoLink'); document.querySelector('#vNoLink p').textContent = 'Este enlace no es válido. Escanea nuevamente el QR de tu tarjeta.'; return; }
   show('vPin'); $('pin').focus();
@@ -232,6 +237,7 @@ $('pinForm').addEventListener('submit', async e => {
     const k = await crypto.subtle.importKey('raw', b64(pl.k), 'AES-GCM', false, ['decrypt']);
     const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv:b64(WRAP.R.b.i) }, k, b64(WRAP.R.b.c));
     B = JSON.parse(new TextDecoder().decode(pt)); ME = { n: pl.n, t: pl.t, code: pin };
+    if (AGMAP[DIRID]) ME = { ...ME, t: 'ag', fid: AGMAP[DIRID].fid, ag: AGMAP[DIRID].ag };
     ss.set('cdkDirBundle', JSON.stringify(B)); ss.set('cdkDirMe', JSON.stringify(ME));
     history.replaceState(null, '', location.pathname);
     start();
@@ -256,14 +262,18 @@ const sent = a => !!PLANS[a.fid];
 
 /* ===== Vistas ===== */
 function start(){
+  if (ME.t === 'ag' && ME.fid){ location.replace('index.html#dir=' + encodeURIComponent(ME.fid) + '&ag=1'); return; }
   show('vMain');
   $('hSub').textContent = `${ME.n} · ${B.periodo}`;
   $('fuente').textContent = 'Fuente: ' + B.fuente;
-  if (ME.t === 'dir'){ $('voteCard').hidden = false; $('voteBtn').href = VOTE_URL + '#c=' + ME.code; }
+  if (ME.t === 'dir'){ $('voteCard').hidden = false; $('voteBtn').href = VOTE_URL + '#c=' + ME.code; $('revBtn').href = VOTE_URL + '#c=' + ME.code + '&r=1'; loadRev(); setInterval(loadRev, 20000); }
   $('fRm').insertAdjacentHTML('beforeend', B.regiones.map(r => `<option value="${esc(r.rm)}">${esc(r.rm)} · ${esc(r.region)}</option>`).join(''));
   const v = new URLSearchParams(location.hash.slice(1)).get('v');
   go(['red','reg','ag','feed'].includes(v) ? v : 'red');
   renderAll(); loadPlans(); setInterval(loadPlans, 15000);
+}
+async function loadRev(){
+  try { const r = await fetch(CFG_URL, { cache:'no-store' }); if (!r.ok) return; const j = await r.json(); $('revBtn').hidden = !(j.fields && j.fields.revisar && j.fields.revisar.booleanValue); } catch(e){}
 }
 let view = 'red';
 function go(v){
