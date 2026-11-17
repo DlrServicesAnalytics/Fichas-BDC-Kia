@@ -301,7 +301,7 @@ async function decrypt(pin){
     const a = Bd && Bd.ag.find(x => x.fid === h.get('dir'));
     if (!a){ location.replace('directivos.html'); return; }
     let me = null; try { me = JSON.parse(sessionStorage.getItem('cdkDirMe') || 'null'); } catch(e){}
-    DIR = { a, back: 'directivos.html#v=' + (h.get('v') || 'ag'), ag: h.get('ag') === '1' && me && me.t === 'ag', code: me && me.code }; FID = a.fid; D = a.D; await 0; return open();
+    DIR = { a, back: 'directivos.html#v=' + (h.get('v') || 'ag'), ag: h.get('ag') === '1' && me && me.t === 'ag', code: me && me.code, nm: me && me.nm }; FID = a.fid; D = a.D; await 0; return open();
   }
   TOKEN = h.get('t') || '';
   if (!TOKEN || !window.crypto || !crypto.subtle) { show('vNoLink'); return; }
@@ -392,7 +392,7 @@ async function dirMode(){
   const a = DIR.a;
   if (DIR.ag){
     $('hdr').querySelector('.eyebrow').textContent = 'Ficha de desempeño BDC';
-    document.querySelector('main.wrap').insertAdjacentHTML('afterbegin', `<a class="dvote" href="https://dlrservicesanalytics.github.io/cumbre-bdc-votacion/#c=${encodeURIComponent(DIR.code || '')}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:14px 16px;border-radius:12px;background:#05141F;color:#fff;text-decoration:none"><span><b style="display:block">Concurso de Mejores Prácticas</b><small style="opacity:.8">Vota como Líder BDC · revisa los proyectos finalistas</small></span><span style="background:#fff;color:#05141F;font-weight:800;padding:8px 14px;border-radius:9px;white-space:nowrap">Ir a votar</span></a>`);
+    document.querySelector('main.wrap').insertAdjacentHTML('afterbegin', `<a class="dvote" href="https://dlrservicesanalytics.github.io/cumbre-bdc-votacion/#c=${encodeURIComponent(DIR.code || '')}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:14px 16px;border-radius:12px;background:#05141F;color:#fff;text-decoration:none"><span>${DIR.nm ? `<small style="display:block;opacity:.8;margin-bottom:2px">Hola, ${esc(DIR.nm)}</small>` : ""}<b style="display:block">Concurso de Mejores Prácticas</b><small style="opacity:.8">Vota como Líder BDC · revisa los proyectos finalistas</small></span><span style="background:#fff;color:#05141F;font-weight:800;padding:8px 14px;border-radius:9px;white-space:nowrap">Ir a votar</span></a>`);
   } else {
   document.querySelector('header.top .in').insertAdjacentHTML('afterbegin', `<a class="dback" href="${DIR.back}">← Volver al portal de directivos</a>`);
   $('hdr').querySelector('.eyebrow').textContent = 'Portal de directivos · Ficha de agencia';
