@@ -96,16 +96,6 @@ button{font:inherit;font-weight:700;font-size:17px;border:0;border-radius:10px;p
 .saved{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
 /* pin */
 .gate{max-width:420px;margin:40px auto 0;text-align:center}
-.lock{border-top:4px solid var(--red);padding:26px 20px 22px}
-.lock .lk-ic{width:52px;height:52px;fill:var(--ink);stroke:var(--ink);stroke-width:3.5;margin-bottom:8px}
-.lock .lk-ic circle{fill:#fff;stroke:none}
-.lock .lk-eye{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--red)}
-.lock h2{margin:6px 0 4px;font-size:22px;line-height:1.2;color:var(--ink);border:0;padding:0;text-transform:none;letter-spacing:0}
-.lock h2::after{display:none}
-.lock .lk-conf{font-size:17px;font-weight:700;color:var(--ink);margin:0 0 12px}
-.lock .lk-st{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 0}
-.lock .lk-st i{width:8px;height:8px;border-radius:50%;background:var(--red);animation:lkp 1.4s infinite}
-@keyframes lkp{50%{opacity:.25}}
 .gate .card{padding:22px}
 .pin{font-size:30px;letter-spacing:.5em;text-align:center;max-width:220px;margin:12px auto 0;display:block;padding-left:.5em}
 .done{text-align:center}
@@ -160,6 +150,19 @@ body.has-cd{padding-bottom:84px}
 .ppMore .mt{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:16px 2px 8px}
 .ppMore details .pq .tp{display:none}
 .ppMore details .pq{border:0;border-top:1px solid var(--line);border-radius:0;margin:0}
+/* ===== Agenda de talleres 19-nov (bandera temporal) ===== */
+.agf{background:var(--ink);color:#fff;border-radius:12px;border-top:4px solid var(--red);padding:14px 14px 10px;margin:16px 0 0;position:relative}
+.agf .x{position:absolute;top:6px;right:6px;background:transparent;border:0;color:#fff;font-size:24px;line-height:1;padding:6px 10px;opacity:.85;border-radius:8px}
+.agf .ey{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#CE8A6C}
+.agf h3{margin:2px 0 8px;font-size:18px;color:#fff;padding-right:30px}
+.agf .who{font-size:13px;font-weight:700;margin:10px 0 5px;color:#DADBDC}.agf .who span{display:inline-block;background:#fff;color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.06em;padding:2px 8px;border-radius:99px;margin-left:6px}
+.agf .rw{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;background:rgba(255,255,255,.08);border-radius:8px;padding:8px 10px;margin-bottom:5px;font-size:14px}
+.agf .rw b{font-variant-numeric:tabular-nums}.agf .rw small{display:block;font-size:12px;color:#B4B9BC}
+.agf .rw.now{background:#fff;color:var(--ink)}.agf .rw.now small{color:var(--gray)}
+.agf .rw em{font-style:normal;background:var(--red);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 7px;border-radius:4px;white-space:nowrap}
+.agr{display:block;width:100%;margin:16px 0 0;background:#fff;color:var(--ink);border:1px solid var(--ink);border-radius:10px;font-size:14px;padding:10px 12px}
+@media(max-width:420px){.agf .rw{grid-template-columns:84px 1fr}.agf .rw em{grid-column:1/-1;justify-self:start}}
+@media print{.agf,.agr{display:none!important}}
 @media(min-width:560px){.kpis{grid-template-columns:repeat(3,1fr)}.kpi.wide{grid-column:auto}}
 </style>
 </head>
@@ -173,18 +176,6 @@ body.has-cd{padding-bottom:84px}
   <!-- Sin enlace -->
   <section id="vNoLink" class="gate" hidden>
     <div class="card"><h2 style="margin-top:0">Escanea tu QR</h2><p>Para abrir tu ficha escanea el código QR de la tarjeta que recibiste en la Cumbre Nacional de Líderes BDC 2026.</p></div>
-  </section>
-
-  <!-- Bloqueo durante la conferencia -->
-  <section id="vLock" class="gate" hidden>
-    <div class="card lock">
-      <svg class="lk-ic" viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="21" width="30" height="21" rx="4"/><path d="M15 21v-6a9 9 0 0 1 18 0v6" fill="none"/><circle cx="24" cy="31" r="3"/></svg>
-      <div class="lk-eye">Tu ficha está en pausa</div>
-      <h2>Se abrirá al terminar la conferencia</h2>
-      <p class="lk-conf">“BDC como motor estratégico de ventas”</p>
-      <p>Te invitamos a poner toda tu atención en la conferencia. Al terminar, esta pantalla se abrirá sola para que revises tu ficha y armes tu plan de acción.</p>
-      <p class="lk-st"><i></i>Esperando apertura</p>
-    </div>
   </section>
 
   <!-- PIN -->
@@ -294,7 +285,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 const pc = v => (Math.round(v * 10) / 10).toFixed(1) + '%';
-const show = v => ['vNoLink','vLock','vPin','vFicha','vDone'].forEach(x => $(x).hidden = x !== v);
+const show = v => ['vNoLink','vPin','vFicha','vDone'].forEach(x => $(x).hidden = x !== v);
 const store = {
   get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
   set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
@@ -323,7 +314,7 @@ async function decrypt(pin){
     const a = Bd && Bd.ag.find(x => x.fid === h.get('dir'));
     if (!a){ location.replace('directivos.html'); return; }
     let me = null; try { me = JSON.parse(sessionStorage.getItem('cdkDirMe') || 'null'); } catch(e){}
-    DIR = { a, back: 'directivos.html#v=' + (h.get('v') || 'ag'), ag: h.get('ag') === '1' && me && me.t === 'ag', code: me && me.code, nm: me && me.nm }; FID = a.fid; D = a.D; if (DIR.ag) await waitUnlock(); await 0; return open();
+    DIR = { a, back: 'directivos.html#v=' + (h.get('v') || 'ag'), ag: h.get('ag') === '1' && me && me.t === 'ag', code: me && me.code, nm: me && me.nm }; FID = a.fid; D = a.D; await 0; return open();
   }
   TOKEN = h.get('t') || '';
   if (!TOKEN || !window.crypto || !crypto.subtle) { show('vNoLink'); return; }
@@ -334,29 +325,10 @@ async function decrypt(pin){
     ENC = (await r.json())[FID];
     if (!ENC) throw 0;
   } catch(e){ show('vNoLink'); $('vNoLink').querySelector('p').textContent = 'Este enlace no es válido. Escanea nuevamente el QR de tu tarjeta.'; return; }
-  await waitUnlock();
   const remembered = store.sget('pin:' + FID);
   if (remembered) { try { D = await decrypt(remembered); return open(); } catch(e){} }
   show('vPin'); $('pin').focus();
 })();
-
-/* Bloqueo de fichas: se abren desde el tablero de votación (Control → Abrir fichas). */
-async function fichasAbiertas(){
-  const r = await fetch('https://firestore.googleapis.com/v1/projects/cumbre-bdc-2026/databases/(default)/documents/config/votacion?key=' + FS_KEY + '&t=' + Date.now(), { cache:'no-store' });
-  if (r.status === 404) return false;
-  if (!r.ok) throw new Error('cfg');
-  const f = (await r.json()).fields || {};
-  return !!(f.fichas && f.fichas.booleanValue);
-}
-async function waitUnlock(){
-  let fallos = 0;
-  for (;;){
-    try { if (await fichasAbiertas()) return; fallos = 0; }
-    catch(e){ if (++fallos >= 4) return; }
-    if ($('vLock').hidden) show('vLock');
-    await new Promise(r => setTimeout(r, 8000));
-  }
-}
 
 $('pinForm').addEventListener('submit', async e => {
   e.preventDefault();
@@ -369,11 +341,51 @@ $('pinForm').addEventListener('submit', async e => {
   finally { $('pinBtn').disabled = false; $('pinBtn').textContent = 'Abrir mi ficha'; }
 });
 
+
+/* ===== Agenda de talleres 19-nov (bandera temporal; se oculta sola a las 13:00) ===== */
+const AG_DATE = "2026-11-19";
+const AG_SLOTS = [["10:00","11:00"],["11:00","12:00"],["12:00","13:00"]];
+const AG_WS = { L:["Taller de Liderazgo","Aula 1 y 2"], E:["Escape Room","Showroom"], K:["Taller de KPI's & Coaching","Aula 3 y 4"] };
+const AG_ROT = { SPORTAGE:["L","K","E"], SELTOS:["E","L","K"], EV3:["K","E","L"] };
+const AG_ALIAS = { "MAX":"MAX SALTILLO" };   // nombre en lista de asistencia -> nombre en ficha
+const AG_DATA = {"Kia Aeropuerto": [{"n": "Midori Arlene Almaguer Montiel", "e": "SELTOS"}], "Kia Ahome": [{"n": "Khiriam Giselle Montiel Carreon", "e": "SPORTAGE"}], "Kia Altaria": [{"n": "Diana Araceli Sanchez Mejia", "e": "SPORTAGE"}], "Kia Altas Montañas": [{"n": "Isai Gonzalez Sanjuan", "e": "SPORTAGE"}], "Kia Angelopolis": [{"n": "Alma Mejia Salamanca", "e": "SELTOS"}], "Kia Animas": [{"n": "Maria Fernanda Hernandez Melgar", "e": "EV3"}], "Kia Avenida": [{"n": "Jessica Ibeth Morales Ramirez", "e": "EV3"}], "Kia Bajio": [{"n": "Denisse Azeneth Santos Zuñiga", "e": "SPORTAGE"}], "Kia Bernardez": [{"n": "Sofía Berenice Hernández Rodriguez", "e": "SPORTAGE"}], "Kia Boca": [{"n": "Alma Itzel Soto Portillo", "e": "EV3"}], "Kia Bonampak": [{"n": "Priscila Santiago Ochoa", "e": "EV3"}], "Kia Brisas": [{"n": "Daniel Alejandro Villegas Navarro", "e": "SPORTAGE"}], "Kia Campestre": [{"n": "Renata Osorio Lara", "e": "SELTOS"}, {"n": "Maria Guadalupe Salinas Ruiz", "e": "SPORTAGE"}], "Kia Capital": [{"n": "Miguel Angel Delgado Guerrero", "e": "SELTOS"}], "Kia Carretera 57": [{"n": "Evangelina Huerta Perez", "e": "SPORTAGE"}], "Kia Cd Guzman": [{"n": "Sandra Leticia Ramirez Medrano", "e": "SELTOS"}], "Kia Cholula": [{"n": "Francisco Eduardo Cruces Giron", "e": "SPORTAGE"}], "Kia Coacalco": [{"n": "Monica De La Rosa Garcia", "e": "SPORTAGE"}], "Kia Coapa": [{"n": "Liliana Jetzemanie Chavez Molina", "e": "EV3"}], "Kia Coliman": [{"n": "Guadalupe Vianey Denis Barreto", "e": "EV3"}], "Kia Corregidora": [{"n": "Nadia Valeria Gonzalez Aranda", "e": "SELTOS"}], "Kia Country Club": [{"n": "Fatima Gonzalez Hernandez", "e": "EV3"}], "Kia Cuautitlan": [{"n": "Berenice Martinez Calderon", "e": "EV3"}], "Kia Del Duero": [{"n": "Diana Veronica Ruiz Martinez", "e": "SPORTAGE"}], "Kia Del Valle": [{"n": "Cintya Garibay Rayón", "e": "SPORTAGE"}, {"n": "Diana Margot Mendoza Moreno", "e": "SELTOS"}], "Kia Diamante": [{"n": "Katia De La Rosa Jaramillo", "e": "SELTOS"}], "Kia Division del Norte": [{"n": "Maria Guadalupe Aguilar Lopez", "e": "SELTOS"}], "Kia Dorada": [{"n": "Luis Angel Rivera Contreras", "e": "EV3"}], "Kia Ecatepec": [{"n": "Luis Daniel Cruz Luz", "e": "SELTOS"}], "Kia Esmeralda": [{"n": "Brenda Guadalupe Carcaño Mendoza", "e": "EV3"}], "Kia Frontera": [{"n": "Jose Manuel Guillen Jasso", "e": "SPORTAGE"}], "Kia Futura": [{"n": "Maritza Veronica Garcia Molina", "e": "EV3"}], "Kia Galerias": [{"n": "Brenda Palacios Avalos", "e": "EV3"}], "Kia Gonzalitos": [{"n": "Alejandra Jimenez Garcia", "e": "EV3"}], "Kia Guadalupe": [{"n": "Monica Alejandra Ramos Gonzalez", "e": "SPORTAGE"}], "Kia Guadiana": [{"n": "Beatriz Mercedes Ayala Diaz", "e": "EV3"}], "Kia Guerrerense": [{"n": "Yajaira Vianey Diaz Cortés", "e": "EV3"}], "Kia Innova": [{"n": "Mariana Leyva Gonzalez", "e": "SPORTAGE"}], "Kia Ixtapaluca": [{"n": "Daniela Benitez Varela", "e": "SELTOS"}], "Kia Iztapalapa": [{"n": "Gerardo Lima Ortega", "e": "EV3"}], "Kia Juriquilla": [{"n": "Maria Alejandra Lopez Rincon", "e": "SPORTAGE"}], "Kia Juventud": [{"n": "Armando Prieto Pina", "e": "SELTOS"}], "Kia Laguna": [{"n": "Maria Berenice Luna Castro", "e": "SPORTAGE"}], "Kia Laredo": [{"n": "Emily  Paola Lugo Perez", "e": "SPORTAGE"}], "Kia Linda Vista": [{"n": "Veronica Flores Rodriguez", "e": "SELTOS"}, {"n": "Yamil Guadalupe Mendez Anguiano", "e": "SELTOS"}], "Kia Lomas Verdes": [{"n": "Liset Esmeralda Calderon Cardoso", "e": "SELTOS"}], "Kia Lopez Mateos": [{"n": "Perla Guadalupe Suarez Garibay", "e": "SPORTAGE"}], "Kia Los Fuertes": [{"n": "Ana Karen Rodriguez Delgado", "e": "SPORTAGE"}], "Kia Malinche": [{"n": "Sthefanny Juarez  Zamora", "e": "EV3"}], "Kia Manantial": [{"n": "Oliva Jazmin Carrillo Hernandez", "e": "EV3"}], "Kia Mariano Escobedo": [{"n": "Jaqueline Pineda Alcaraz", "e": "SELTOS"}], "Kia Max Saltillo": [{"n": "Jesus Edgar Pachuca Ramirez", "e": "EV3"}], "Kia Metepec": [{"n": "Victoria Arzate Becerril", "e": "EV3"}], "Kia Nayarita": [{"n": "Luisa Alejandra Gonzalez Covarrubias", "e": "SPORTAGE"}], "Kia Norte": [{"n": "Genoveva Guzman Juarez", "e": "SELTOS"}], "Kia Nova Qro": [{"n": "Arlett Gutierrez Cabrera", "e": "EV3"}], "Kia Pape": [{"n": "Sergio Yael Silva Farias", "e": "SELTOS"}], "Kia Paricutin": [{"n": "Jose Aurelio Maya Lopez", "e": "SELTOS"}], "Kia Patriotismo": [{"n": "Victor Javier Solis Malpica", "e": "SPORTAGE"}], "Kia Peninsula": [{"n": "Hilda Victoria Corso Alvarez", "e": "SELTOS"}], "Kia Playacar": [{"n": "Josue Martin Zacarias Vitales", "e": "EV3"}], "Kia Plaza del Valle": [{"n": "Karen Rios Martinez", "e": "SPORTAGE"}], "Kia Poliforum": [{"n": "Gabriela Gomez", "e": "SPORTAGE"}], "Kia Primavera": [{"n": "Brenda Rocio Ramirez Ramirez", "e": "SPORTAGE"}], "Kia Puerto Escondido": [{"n": "Hector Centeno Barragan", "e": "SELTOS"}], "Kia Punto Sur": [{"n": "Diana Ramirez Vazquez", "e": "SELTOS"}], "Kia Salina Cruz": [{"n": "Carlos Gallardo Ramirez", "e": "SPORTAGE"}], "Kia San Juan": [{"n": "Melissa Ramos Bastarrachea", "e": "SELTOS"}], "Kia Santa Anita": [{"n": "Alejandra Paulina Galindo Hernandez", "e": "EV3"}], "Kia Santa Fe": [{"n": "Diana Laura Vazquez Perez", "e": "SPORTAGE"}, {"n": "Betzabé Castillo", "e": "SELTOS"}, {"n": "Alireza Moradifahim", "e": "EV3"}], "Kia Satelite": [{"n": "Jehieli Abad Sanchez", "e": "SPORTAGE"}], "Kia Sendero": [{"n": "Kamery Samara Hernandez Garcia", "e": "SPORTAGE"}, {"n": "Jonathan Alejandro Montes García", "e": "EV3"}], "Kia Serdan": [{"n": "Brenda Adriana Hernández Vizuet", "e": "SPORTAGE"}], "Kia Tajin": [{"n": "Fabiola Carvajal Castro", "e": "SELTOS"}], "Kia Tapachula": [{"n": "Paola Montserrat Cruz Pérez", "e": "SELTOS"}], "Kia Texcoco": [{"n": "Dafne Fernanda Domenech Gomez", "e": "SELTOS"}], "Kia Tlahuac": [{"n": "Katerin Paulina Sanchez Martinez", "e": "EV3"}], "Kia Vallejo": [{"n": "Mauricio Montes De Oca Gonzalez", "e": "SELTOS"}], "Kia Via Alta": [{"n": "Maria Mayela Cervantes De La Torre", "e": "EV3"}], "Kia Victoria": [{"n": "Alejandra Berenice Perez Briones", "e": "EV3"}], "Kia Villas": [{"n": "Fatima Perez Cruz", "e": "SELTOS"}], "Kia Vision": [{"n": "Argentina Zalapa Cano", "e": "EV3"}]};
+const agKey = s => String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9 ]/g,' ').replace(/^\s*KIA\s+/,'').replace(/\s+/g,' ').trim();
+const AG_IDX = {}; Object.entries(AG_DATA).forEach(([k,v]) => { const kk = agKey(k); AG_IDX[AG_ALIAS[kk] || kk] = v; });
+let agClosed = store.sget('agClosed') === '1', agTimer = null;
+function agNow(){
+  const sim = new URLSearchParams(location.hash.slice(1)).get('ah'); // prueba: #t=...&ah=11:30
+  if (sim && /^\d{1,2}:\d{2}$/.test(sim)) { const [h,m] = sim.split(':'); return { d:AG_DATE, m:+h*60 + +m }; }
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(x => [x.type,x.value]));
+  return { d:`${p.year}-${p.month}-${p.day}`, m:+p.hour*60 + +p.minute };
+}
+function agRender(){
+  let box = $('agf'), re = $('agr');
+  if (!box){ document.querySelector('main.wrap').insertAdjacentHTML('afterbegin','<section class="agf" id="agf" hidden aria-label="Agenda de talleres"></section><button type="button" class="agr" id="agr" hidden>📅 Ver mi agenda de talleres</button>'); box = $('agf'); re = $('agr');
+    re.addEventListener('click', () => { agClosed = false; store.sset('agClosed','0'); agRender(); }); }
+  const ppl = D && AG_IDX[agKey(D.agencia)];
+  if (D && !ppl) console.warn('[agenda] sin asistentes para:', D.agencia, '→', agKey(D.agencia));
+  const t = agNow(), mm = s => { const [h,m] = s.split(':'); return h*60 + +m; };
+  let html = '';
+  if (ppl && t.d <= AG_DATE){
+    const live = t.d < AG_DATE ? -1 : t.m;
+    ppl.forEach(pp => { const r = AG_ROT[pp.e]; if (!r) return; let rows = '';
+      AG_SLOTS.forEach(([a,b],i) => { if (live >= mm(b)) return; const w = AG_WS[r[i]], now = live >= mm(a);
+        rows += `<div class="rw${now?' now':''}"><b>${a}–${b}</b><div>${esc(w[0])}<small>${esc(w[1])}</small></div>${now?'<em>EN CURSO</em>':''}</div>`; });
+      if (rows) html += `<div class="who">${esc(pp.n)}<span>${esc(pp.e)}</span></div>${rows}`; });
+  }
+  if (!html){ box.hidden = re.hidden = true; if (agTimer && ppl && t.d >= AG_DATE){ clearInterval(agTimer); agTimer = null; } return; }
+  box.innerHTML = `<button type="button" class="x" aria-label="Cerrar agenda">×</button><div class="ey">Cumbre Nacional de Líderes BDC 2026</div><h3>📅 Tu agenda de talleres · jueves 19</h3>${html}`;
+  box.querySelector('.x').addEventListener('click', () => { agClosed = true; store.sset('agClosed','1'); agRender(); });
+  box.hidden = agClosed; re.hidden = !agClosed;
+  if (!agTimer) agTimer = setInterval(agRender, 30000);
+}
+
 /* ===== Render de la ficha ===== */
 function open(){
   $('dueTxt').textContent = DEADLINE_TXT + ' (hora del centro de México)';
   renderCal();
   if (!DIR) startCountdown();
+  if (!DIR) try { agRender(); } catch(e){}
   document.title = 'Ficha BDC · ' + D.agencia;
   if (D.soloPlan){
     $('hdr').innerHTML = `<div class="eyebrow">Plan de acción BDC</div><h1>${esc(D.agencia)}</h1><div class="sub">${esc(D.grupo ? D.grupo + ' · ' : '')}Cumbre Nacional de Líderes BDC 2026</div>`;
